@@ -1,6 +1,10 @@
 # detection-limit-fitting
 Software for fitting robust detection limits (LODs) to serial dilution data. Fits can then be plotted individually or multiple on the same axes, and compared using t tests.
 
+## Discussions
+
+If you have feature requests or questions, or would like to get help with problem or report a bug, please use the discussions tab.
+
 ## Installation
 ### Matlab app install (multiplatform)
 If you use Matlab and want to use the app inside Matlab, download build/LOD_calculations_beta_1.mlappinstall. Open with Matlab and it will install in My Apps. It can then be found and opened from the APPS tab in Matlab.
@@ -34,7 +38,7 @@ Then click 'Fit'
 
 The data and fitted model should be plotted in the box on the left, and the LOD and fit statistics in the box underneath.
 
-If the fit is unsuccessful, try a different model. If still unsuccessful, please email me and include your data file: ben.miller.13@ucl.ac.uk.
+If the fit is unsuccessful, try a different model. If still unsuccessful, please use the forum to discuss.
 
 Save Figure: to save the plot in various formats
 
