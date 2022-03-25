@@ -66,9 +66,17 @@ classdef LOD_calculations_beta_1 < matlab.apps.AppBase
     %Original code developed by Carly Holstein, Department of Bioengineering, and Maryclare
     %Griffin, Department of Statistics
     %Copyright Carly Holstein, University of Washington, 2014-2015
-    %Extended code develiped by Benjamin S Miller, London Centre for
+    %Originally published: Statistical Method for Determining and Comparing Limits of Detection of Bioassays
+    %Carly A. Holstein, Maryclare Griffin, Jing Hong, and Paul D. Sampson
+    %Analytical Chemistry 2015 87 (19), 9795-9801
+    %DOI: 10.1021/acs.analchem.5b02082
+    %Extended code and GUI app developed by Benjamin S Miller, London Centre for
     %Nanotechnology, University College London
     %Copyright Benjamin S Miller, University College London, 2022
+    %Published: Sub-picomolar lateral flow antigen detection with two-wavelength imaging of composite nanoparticles
+    %Benjamin S. Miller, Michael R. Thomas, Matthew Banner et al.
+    %Biosensors and Bioelectronics, 114133 (2022)
+    %DOI: 10.1016/j.bios.2022.114133
     
     %Other functions used:
     %Adam Danz (2022). copyUIAxes (https://www.mathworks.com/matlabcentral/fileexchange/73103-copyuiaxes), MATLAB Central File Exchange.
