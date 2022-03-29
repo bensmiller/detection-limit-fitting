@@ -77,6 +77,8 @@ Select the comparator (control) file, to which all other files will be compared,
 
 Select single or multiple comparison files using the 'Select file(s)' button. The files must be the .mat files saved previously in the 'LOD calculation' tab.
 
+**NOTE: all files must have the same units.**
+
 Set the confidence level for the LOD confidence intervals.
 
 As previously, select which files to compare and click 'Compare'. Note: each file must have a unique name otherwise it will not run.
@@ -94,6 +96,9 @@ Data from: Miller, B.S., Bezinge, L., Gliddon, H.D. et al. Spin-enhanced nanodia
 Use test_file_2.xlsx. Use model "Langmuir", "4PL" or "5PL" and concentration units "fM"
 
 Data from: Benjamin S. Miller, Michael R. Thomas, Matthew Banner et al. Sub-picomolar lateral flow antigen detection with two-wavelength imaging of composite nanoparticles. Biosensors and Bioelectronics, 114133 (2022). https://doi.org/10.1016/j.bios.2022.114133
+
+## Known issues
+1. Problem with t tests using incorrect confidence intervals and giving incorrect results.
 
 ## Authors and References
 
