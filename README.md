@@ -28,6 +28,8 @@ Data must be in .xlsx files with two columns. Column 1 must be concentration val
 ### LOD calculation
 ![LOD calculation screenshot](screenshots/LOD_calcs.png | width=100)
 
+<img src="screenshots/LOD_calcs.png" width="100">
+
 Click 'File browse' to select a file. There are then multiple parameters to select:
 1. Model: chose between the four models. See https://doi.org/10.1016/j.bios.2022.114133 for descriptions of the models.
 2. Concentration units: input the units of your analyte concentrations.
