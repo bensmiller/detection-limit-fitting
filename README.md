@@ -9,6 +9,8 @@ If you have feature requests or questions, or would like to get help with proble
 ### Matlab app install (multiplatform)
 If you use Matlab and want to use the app inside Matlab, download build/LOD_calculations_beta_1.mlappinstall. Open with Matlab and it will install in My Apps. It can then be found and opened from the APPS tab in Matlab.
 
+Alternatively, open Matlab and click Add-Ons. Search for "Detection Limit Fitting Tool" and add to Matlab.
+
 ### Windows standalone installation
 If you want to use it as a standalone application in Windows, download build/LOD_calculations_beta_1.exe. Open and run and it will install as a standalone application.
 
