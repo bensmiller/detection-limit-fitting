@@ -26,7 +26,7 @@ The application has three tabs:
 Data must be in .xlsx files with two columns. Column 1 must be concentration values and column 2 must be the corresponding signal values. Column headings are optional (see example files in /test), described below in 'Test Files' section.
 
 ### LOD calculation
-![LOD calculation screenshot](screenshots/LOD_calcs.png | width=100)
+![LOD calculation screenshot](screenshots/LOD_calcs.png | width=500)
 
 <img src="screenshots/LOD_calcs.png" width="200">
 
