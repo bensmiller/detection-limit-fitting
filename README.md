@@ -36,6 +36,8 @@ Click 'File browse' to select a file. There are then multiple parameters to sele
 5. Variance Outlier Confidence Level (%): when finding the 'characteristic variance' to calculate the cutoff, a hypothesis test (G test) is performed to exclude outlier variances. This is the confidence level of that hypothesis test. See https://doi.org/10.1016/j.bios.2022.114133 for more details.
 6. Confidence Level for LOD Interval (%): confidence level for the confidence interval of the LOD.
 
+<img src="screenshots/LOD_calcs_labelled.png" width="500">
+
 Then click 'Fit'
 
 The data and fitted model should be plotted in the box on the left, and the LOD and fit statistics in the box underneath.
