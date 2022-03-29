@@ -55,13 +55,20 @@ Save Data: Export a .xlsx file of the data, LOD, fitted parameters and statistic
 Save .mat: Save data, LOD, fitted parameters and statistics in a .mat file. This is required for Multiple plots and T tests functionality.
 
 ### Multiple plots
+
+<img src="screenshots/multiple_1.png" width="500">
+
 Click 'Add files' to add multiple files (either at once or can be added sequentially). The files must be the .mat files saved previously in the 'LOD calculation' tab.
+
+<img src="screenshots/multiple_2.png" width="500">
 
 When all the files are loaded, use Ctrl/Shift and click to select which files to plot.
 
 Then select 'Colours' to choose the colourscheme. They are ColorBrewer schemes (can be browsed here: https://colorbrewer2.org/)
 
 Click 'Plot selected files'
+
+<img src="screenshots/multiple_3.png" width="500">
 
 Save or clear plot using the buttons on the bottom right.
 
