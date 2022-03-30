@@ -75,9 +75,13 @@ Click 'Plot selected files'
 Save or clear plot using the buttons on the bottom right.
 
 ### T tests
+<img src="screenshots/ttest_1.png" width="500">
+
 Select the comparator (control) file, to which all other files will be compared, using the 'Select file' button. The file must be a .mat file saved previously in the 'LOD calculation' tab.
 
 Select single or multiple comparison files using the 'Select file(s)' button. The files must be the .mat files saved previously in the 'LOD calculation' tab.
+
+<img src="screenshots/ttest_2.png" width="500">
 
 **NOTE: all files must have the same units.**
 
@@ -86,6 +90,8 @@ Set the confidence level for the LOD confidence intervals.
 As previously, select which files to compare and click 'Compare'. Note: each file must have a unique name otherwise it will not run.
 
 The results appear in a table below. They can then be exported to a .xlsx file.
+
+<img src="screenshots/ttest_3.png" width="500">
 
 ## Test files
 ### Linear model fit
