@@ -232,6 +232,9 @@ classdef LOD_calculations_beta_2 < matlab.apps.AppBase
             app.concUnits=app.ConcentrationUnitsEditField.Value;
             %Get analyte concentrations from file
             [testConc,~,ic]=unique(A(A(:,1)~=0,1));
+            if min(testConc)<1
+                errordlg('Lowest concentration is less than 1. As a result fitting maybe be unsuccessful or fitting errors large. Please adjust concentration units to increase the lowest concentration above 1 (e.g. use 100 fM instead of 0.1 pM).')
+            end
             %Get positive and negative signal values from file
             pos_temp=A(A(:,1)~=0,2);
             app.pixInt=[];
@@ -849,7 +852,7 @@ classdef LOD_calculations_beta_2 < matlab.apps.AppBase
                 pVals(i)=ttest_2tailed(app,lodlog(i),greensLODlog(mod(i-1,nModels)+1),lodSElog(i),greensSE(mod(i-1,nModels)+1),ns(i),greenN(mod(i-1,nModels)+1),nParams(i),greenNP(mod(i-1,nModels)+1));
                 ratios(i)=greensLOD(mod(i-1,nModels)+1)/lods(i);
             end
-            app.T = table(lods',ratios',lod_lowers',lod_uppers',pVals'*100,'VariableNames',{sprintf('LOD (%s)',N.concUnits),'LOD ratio',sprintf('LOD lower CI (%s)',N.concUnits),sprintf('LOD upper CI (%s)',N.concUnits),'P-Value (%)'},'RowNames',names);
+            app.T = table(arrayfun(@(x)sprintf('%.2e',x),lods','UniformOutput',false),arrayfun(@(x)sprintf('%.2e',x),ratios','UniformOutput',false),arrayfun(@(x)sprintf('%.2e',x),lod_lowers','UniformOutput',false),arrayfun(@(x)sprintf('%.2e',x),lod_uppers','UniformOutput',false),arrayfun(@(x)sprintf('%.2e',x),pVals','UniformOutput',false),'VariableNames',{sprintf('LOD (%s)',N.concUnits),'LOD ratio',sprintf('LOD lower CI (%s)',N.concUnits),sprintf('LOD upper CI (%s)',N.concUnits),'P-Value'},'RowNames',names);
             parentPosition = get(app.TtestsTab, 'position');
             uitablePosition = [2 parentPosition(4)*.1 parentPosition(3)-2 parentPosition(4)*.5];
             uit = uitable(app.TtestsTab,'Data',app.T);
