@@ -100,7 +100,7 @@ Use test_file_2.xlsx. Use model "Langmuir", "4PL" or "5PL" and concentration uni
 Data from: Benjamin S. Miller, Michael R. Thomas, Matthew Banner et al. Sub-picomolar lateral flow antigen detection with two-wavelength imaging of composite nanoparticles. Biosensors and Bioelectronics, 114133 (2022). https://doi.org/10.1016/j.bios.2022.114133
 
 ## Known issues
-1. Problem with t tests using incorrect confidence intervals and giving incorrect results.
+1. When low concentration values are used, fitting is unsuccessful. Please use concentration units where the lowest concentration is greater than 1.
 
 ## Authors and References
 
