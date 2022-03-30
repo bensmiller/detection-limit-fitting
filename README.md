@@ -106,7 +106,13 @@ Use test_file_2.xlsx and test_file_3.xlsx. Use model "Langmuir", "4PL" or "5PL" 
 Data from: Benjamin S. Miller, Michael R. Thomas, Matthew Banner et al. Sub-picomolar lateral flow antigen detection with two-wavelength imaging of composite nanoparticles. Biosensors and Bioelectronics, 114133 (2022). https://doi.org/10.1016/j.bios.2022.114133
 
 ## Known issues
-1. When low concentration values are used, fitting is unsuccessful. Please use concentration units where the lowest concentration is greater than 1.
+1. When very low concentration values are used, fitting is unsuccessful. Please use concentration units where the lowest concentration is greater than 1.
+
+## Cite as
+
+Ben Miller (2022). Detection Limit Fitting Tool (https://github.com/bensmiller/detection-limit-fitting), GitHub. Retrieved March 30, 2022.
+
+Miller, Benjamin S., et al. “Sub-Picomolar Lateral Flow Antigen Detection with Two-Wavelength Imaging of Composite Nanoparticles.” Biosensors and Bioelectronics, vol. 207, Elsevier BV, July 2022, p. 114133, doi:10.1016/j.bios.2022.114133.
 
 ## Authors and References
 
