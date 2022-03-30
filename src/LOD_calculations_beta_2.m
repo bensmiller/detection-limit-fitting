@@ -109,6 +109,7 @@ classdef LOD_calculations_beta_2 < matlab.apps.AppBase
         actual_xlim
         lastplotted
         T
+        units
     end
     
     methods (Access = private)
@@ -569,8 +570,16 @@ classdef LOD_calculations_beta_2 < matlab.apps.AppBase
             maxpoint=nan;
             ylims1=nan;
             ylims2=nan;
+            if app.plotCounter==0
+                N=load(items_list{1});
+                app.units=string(N.concUnits);
+            end
             for i=1:length(items_list)
                 M=load(items_list{i});
+                if string(M.concUnits)~=app.units
+                    errordlg('Units not the same')
+                    error('Units not the same')
+                end
                 gap_tolerance=0.32;
                 if M.LOD_lower95<min(M.allTestData_testConc) && M.LOD_lower95>0
                     zeroMark_temp=10^floor(log10(M.LOD_lower95)-gap_tolerance);
@@ -823,8 +832,14 @@ classdef LOD_calculations_beta_2 < matlab.apps.AppBase
             items_list=app.ComparisonsListBox.Value;
             items_list=[{app.ComparetoEditField.Value},items_list];
             gamma=app.ConfidenceLevelforLODIntervalEditField_2.Value/100;
+            N=load(items_list{1});
+            units1=string(N.concUnits);
             for i=1:length(items_list)
                 M=load(items_list{i});
+                if string(M.concUnits)~=units1
+                    errordlg('Units not the same')
+                    error('Units not the same')
+                end
                 [~,name,~] = fileparts(items_list{i});
                 names{i}=name;
                 rmse(i)=M.fitresult.RMSE;
