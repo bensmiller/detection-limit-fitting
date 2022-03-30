@@ -64,6 +64,8 @@ Click 'Add files' to add multiple files (either at once or can be added sequenti
 
 When all the files are loaded, use Ctrl/Shift and click to select which files to plot.
 
+**NOTE: all files must have the same units.**
+
 Then select 'Colours' to choose the colourscheme. They are ColorBrewer schemes (can be browsed here: https://colorbrewer2.org/)
 
 Click 'Plot selected files'
