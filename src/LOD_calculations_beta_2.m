@@ -376,7 +376,7 @@ classdef LOD_calculations_beta_2 < matlab.apps.AppBase
             y_limits=[min(app.allData_pixInt)-0.1,max(app.allData_pixInt)+0.1];
             hNegCtrl = errorbar(app.UIAxes,zeroMark,mean(app.pixInt.negCtrl),std(app.pixInt.negCtrl),'o','markersize',4,'Color',cols(1,:),'linewidth',1,'capsize',0);
             plot(app.UIAxes,repmat(zeroMark,[1,app.numReps_negCtrl]),app.pixInt.negCtrl,'x','MarkerSize',4,'color',cols(1,:),'linewidth',.5);
-            fitData_x = logspace(log10(10^minpoint-2),log10(10^max(app.allTestData_testConc_logplus2)-2),50);
+            fitData_x = logspace(log10(10^(0.99*minpoint)-2),log10(10^max(app.allTestData_testConc_logplus2)-2),50);
             fitData_x_calc=log10(fitData_x+2);
             [ypred,yci] = predict(app.fitresult,fitData_x_calc'); %Prediction interval of fit, 95% confidence, functional interval, nonsimultaneous
             h4PLFit = plot(app.UIAxes,fitData_x,ypred,'color',cols(1,:),'linewidth',.7);
@@ -649,7 +649,7 @@ classdef LOD_calculations_beta_2 < matlab.apps.AppBase
                 end
                 hNegCtrl = errorbar(app.UIAxes2,zeroMark,mean(M.pixInt.negCtrl),std(M.pixInt.negCtrl),'o','markersize',4,'Color',cols(app.plotCounter,:),'linewidth',1,'capsize',0);
                 plot(app.UIAxes2,repmat(zeroMark,[1,M.numReps_negCtrl]),M.pixInt.negCtrl,'x','MarkerSize',4,'color',cols(app.plotCounter,:),'linewidth',.5);
-                fitData_x = logspace(log10(10^minpoint-2),log10(10^max(M.allTestData_testConc_logplus2)-2),50);
+                fitData_x = logspace(log10(10^(0.99*minpoint)-2),log10(10^max(M.allTestData_testConc_logplus2)-2),50);
                 fitData_x_calc=log10(fitData_x+2);
                 [ypred,yci] = predict(M.fitresult,fitData_x_calc'); %Prediction interval of fit, 95% confidence, functional interval, nonsimultaneous
                 h4PLFit = plot(app.UIAxes2,fitData_x,ypred,'color',cols(app.plotCounter,:),'linewidth',.7);
