@@ -289,7 +289,7 @@ classdef LOD_calculations_beta_2 < matlab.apps.AppBase
                     ft = @(b,xdata)((((b(1))*(10.^xdata))./(b(2)+(10.^xdata)))+b(3)); %Langmuir curve
                     b0 = [max(yData) median(testConc) 0]; %starting points 
             end
-            opt = statset('MaxFunEvals', 1e5, 'MaxIter', 1e5);
+            opt = statset('MaxFunEvals', 1e5, 'MaxIter', 1e5, 'TolX', 1e-18);
             app.fitresult = fitnlm(xData, yData, ft,b0, 'options', opt);
             fitpars = app.fitresult.Coefficients.Estimate;
             %-- Calculate Upper Limit of the Negative Controls, Lc --%
@@ -376,9 +376,9 @@ classdef LOD_calculations_beta_2 < matlab.apps.AppBase
             y_limits=[min(app.allData_pixInt)-0.1,max(app.allData_pixInt)+0.1];
             hNegCtrl = errorbar(app.UIAxes,zeroMark,mean(app.pixInt.negCtrl),std(app.pixInt.negCtrl),'o','markersize',4,'Color',cols(1,:),'linewidth',1,'capsize',0);
             plot(app.UIAxes,repmat(zeroMark,[1,app.numReps_negCtrl]),app.pixInt.negCtrl,'x','MarkerSize',4,'color',cols(1,:),'linewidth',.5);
-            fitData_x = logspace(log10(minpoint),log10(max(app.allTestData_testConc_logplus2)),500);
-            [ypred,yci] = predict(app.fitresult,fitData_x'); %Prediction interval of fit, 95% confidence, functional interval, nonsimultaneous
-            fitData_x = 10.^fitData_x -2;
+            fitData_x = logspace(log10(10^minpoint-2),log10(10^max(app.allTestData_testConc_logplus2)-2),50);
+            fitData_x_calc=log10(fitData_x+2);
+            [ypred,yci] = predict(app.fitresult,fitData_x_calc'); %Prediction interval of fit, 95% confidence, functional interval, nonsimultaneous
             h4PLFit = plot(app.UIAxes,fitData_x,ypred,'color',cols(1,:),'linewidth',.7);
             h4PL95CI = fill(app.UIAxes,[fitData_x,flip(fitData_x)],[yci(:,1);flip(yci(:,2))],cols(1,:),'FaceAlpha', 0.2, 'EdgeColor', 'None'); %95% prediction interval
             hLc = plot(app.UIAxes,[fitData_x(1)*.8,x_limits(2)],[app.Lc app.Lc],'--','color',cols(2,:),'linewidth',.7); %Lc line (horizontal)
@@ -649,9 +649,9 @@ classdef LOD_calculations_beta_2 < matlab.apps.AppBase
                 end
                 hNegCtrl = errorbar(app.UIAxes2,zeroMark,mean(M.pixInt.negCtrl),std(M.pixInt.negCtrl),'o','markersize',4,'Color',cols(app.plotCounter,:),'linewidth',1,'capsize',0);
                 plot(app.UIAxes2,repmat(zeroMark,[1,M.numReps_negCtrl]),M.pixInt.negCtrl,'x','MarkerSize',4,'color',cols(app.plotCounter,:),'linewidth',.5);
-                fitData_x = logspace(log10(minpoint),log10(max(M.allTestData_testConc_logplus2)),50);
-                [ypred,yci] = predict(M.fitresult,fitData_x'); %Prediction interval of fit, 95% confidence, functional interval, nonsimultaneous
-                fitData_x = 10.^fitData_x -2;
+                fitData_x = logspace(log10(10^minpoint-2),log10(10^max(M.allTestData_testConc_logplus2)-2),50);
+                fitData_x_calc=log10(fitData_x+2);
+                [ypred,yci] = predict(M.fitresult,fitData_x_calc'); %Prediction interval of fit, 95% confidence, functional interval, nonsimultaneous
                 h4PLFit = plot(app.UIAxes2,fitData_x,ypred,'color',cols(app.plotCounter,:),'linewidth',.7);
                 h4PL95CI = fill(app.UIAxes2,[fitData_x,flip(fitData_x)],[yci(:,1);flip(yci(:,2))],cols(app.plotCounter,:),'FaceAlpha', 0.2, 'EdgeColor', 'None'); %95% prediction interval
                 hLc = plot(app.UIAxes2,[fitData_x(1)*.8,maxpoint],[M.Lc M.Lc],'--','color',cols(app.plotCounter,:),'linewidth',.7); %Lc line (horizontal)
