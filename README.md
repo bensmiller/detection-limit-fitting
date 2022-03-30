@@ -109,10 +109,13 @@ Data from: Benjamin S. Miller, Michael R. Thomas, Matthew Banner et al. Sub-pico
 1. When very low concentration values are used, fitting is unsuccessful. Please use concentration units where the lowest concentration is greater than 1.
 
 ## Cite as
+If you use this tool or code in a publication please cite the following:
 
 Ben Miller (2022). Detection Limit Fitting Tool (https://github.com/bensmiller/detection-limit-fitting), GitHub. Retrieved March 30, 2022.
 
 Miller, Benjamin S., et al. “Sub-Picomolar Lateral Flow Antigen Detection with Two-Wavelength Imaging of Composite Nanoparticles.” Biosensors and Bioelectronics, vol. 207, Elsevier BV, July 2022, p. 114133, doi:10.1016/j.bios.2022.114133.
+
+Carly A. Holstein, Maryclare Griffin et al. Statistical Method for Determining and Comparing Limits of Detection of Bioassays. Analytical Chemistry 2015 87 (19), 9795-9801. https://doi.org/10.1021/acs.analchem.5b02082
 
 ## Authors and References
 
