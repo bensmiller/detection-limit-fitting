@@ -5,6 +5,9 @@ Software for fitting robust detection limits (LODs) to serial dilution data. Fit
 
 If you have feature requests or questions, or would like to get help with problem or report a bug, please use the discussions tab.
 
+## Latest Revisions
+1. Added functionality to adjust the units and x axis order of magnitude in Multiple plots tab.
+
 ## Installation
 ### Matlab app install (multiplatform)
 If you use Matlab and want to use the app inside Matlab, download build/LOD_calculations_beta_1.mlappinstall. Open with Matlab and it will install in My Apps with the name "LOD_calculations_beta_1". It can then be found and opened from the APPS tab in Matlab.
@@ -114,7 +117,7 @@ Use test_file_2.xlsx and test_file_3.xlsx. Use model "Langmuir", "4PL" or "5PL" 
 Data from: Benjamin S. Miller, Michael R. Thomas, Matthew Banner et al. Sub-picomolar lateral flow antigen detection with two-wavelength imaging of composite nanoparticles. Biosensors and Bioelectronics, 114133 (2022). https://doi.org/10.1016/j.bios.2022.114133
 
 ## Known issues
-1. When very low concentration values are used, fitting is unsuccessful. Please use concentration units where the lowest concentration is greater than 1.
+1. When very low concentration values are used, fitting is unsuccessful. Please use concentration units where the lowest concentration is greater than 1. You can then adjust the x units to your desided units later in the 'Multiple plots' tab (e.g. fit in nM, then plot in M).
 
 ## Cite as
 If you use this tool or code in a publication please cite the following:
