@@ -66,11 +66,19 @@ When all the files are loaded, use Ctrl/Shift and click to select which files to
 
 **NOTE: all files must have the same units.**
 
+If you want to adjust the units, for example to convert from aM to M, you should fill 'Order of magnitude adjustment' with the number of orders of magnitude between your old and new units, taking account of the positive/negative sign (i.e. -18 for aM -> M). Also, fill in the 'New units'.
+
 Then select 'Colours' to choose the colourscheme. They are ColorBrewer schemes (can be browsed here: https://colorbrewer2.org/)
 
 Click 'Plot selected files'
 
+First without adjusting the units (leaving those boxes), so in aM:
+
 <img src="screenshots/multiple_3.png" width="500">
+
+Secondly with a unit adjustment from aM to M:
+
+<img src="screenshots/multiple_4.png" width="500">
 
 Save or clear plot using the buttons on the bottom right.
 
