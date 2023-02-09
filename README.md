@@ -7,7 +7,13 @@ Software for fitting robust detection limits (LODs) to serial dilution data. Fit
 If you have feature requests or questions, or would like to get help with problem or report a bug, please use the discussions tab.
 
 ## Latest Revisions
-1. Added functionality to adjust the units and x axis order of magnitude in Multiple plots tab.
+• Added functionality to adjust the units and x axis order of magnitude in Multiple plots tab.
+•	Added ability to change fonts
+•	Added export as svg (pdf doesn’t support as many fonts as svg)
+•	Bug fixes you listed (should all be fixed)
+•	Added dummy points
+•	Added TAB10 colours
+
 
 ## Installation
 ### Matlab app install (multiplatform)
@@ -145,7 +151,7 @@ Published: Benjamin S. Miller, Michael R. Thomas, Matthew Banner et al. Sub-pico
 
 Other functions used:
 
-Adam Danz (2022). copyUIAxes (https://www.mathworks.com/matlabcentral/fileexchange/73103-copyuiaxes), MATLAB Central File Exchange.
+Stephen23 (2023). MatPlotLib Perceptually Uniform Colormaps (https://www.mathworks.com/matlabcentral/fileexchange/62729-matplotlib-perceptually-uniform-colormaps), MATLAB Central File Exchange
 
 Stephen (2022). ColorBrewer: Attractive and Distinctive Colormaps (https://github.com/DrosteEffect/BrewerMap/releases/tag/3.2.3), GitHub.
 
