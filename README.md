@@ -7,12 +7,12 @@ Software for fitting robust detection limits (LODs) to serial dilution data. Fit
 If you have feature requests or questions, or would like to get help with problem or report a bug, please use the discussions tab.
 
 ## Latest Revisions
-• Added functionality to adjust the units and x axis order of magnitude in Multiple plots tab.
-•	Added ability to change fonts
-•	Added export as svg (pdf doesn’t support as many fonts as svg)
-•	Bug fixes you listed (should all be fixed)
-•	Added dummy points
-•	Added TAB10 colours
+1.  Added functionality to adjust the units and x axis order of magnitude in Multiple plots tab.
+2.	Added ability to change fonts
+3.	Added export as svg (pdf doesn’t support as many fonts as svg)
+4.	Bug fixes you listed (should all be fixed)
+5.	Added dummy points
+6.	Added TAB10 colours
 
 
 ## Installation
