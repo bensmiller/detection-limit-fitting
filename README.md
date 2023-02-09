@@ -10,7 +10,7 @@ If you have feature requests or questions, or would like to get help with proble
 1.  Added functionality to adjust the units and x axis order of magnitude in Multiple plots tab.
 2.	Added ability to change fonts
 3.	Added export as svg (pdf doesn’t support as many fonts as svg)
-4.	Bug fixes you listed (should all be fixed)
+4.	Bug fixes
 5.	Added dummy points
 6.	Added TAB10 colours
 
