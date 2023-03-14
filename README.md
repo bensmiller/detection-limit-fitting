@@ -13,6 +13,7 @@ If you have feature requests or questions, or would like to get help with proble
 4.	Bug fixes
 5.	Added dummy points
 6.	Added TAB10 colours
+7.  Check for required toolboxes on startup
 
 
 ## Installation
