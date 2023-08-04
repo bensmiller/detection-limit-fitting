@@ -7,13 +7,8 @@ Software for fitting robust detection limits (LODs) to serial dilution data. Fit
 If you have feature requests or questions, or would like to get help with problem or report a bug, please use the discussions tab.
 
 ## Latest Revisions
-1.  Added functionality to adjust the units and x axis order of magnitude in Multiple plots tab.
-2.	Added ability to change fonts
-3.	Added export as svg (pdf doesn’t support as many fonts as svg)
-4.	Bug fixes
-5.	Added dummy points
-6.	Added TAB10 colours
-7.  Check for required toolboxes on startup
+1.  NEW FEATURE: ANOVA testing - will update screenshots later
+2.  Also changed t test to just be between two files, now that ANOVA is implemented.
 
 
 ## Installation
