@@ -44,7 +44,7 @@ Click 'File browse' to select a file. There are then multiple parameters to sele
 5. Variance Outlier Confidence Level (%): when finding the 'characteristic variance' to calculate the cutoff, a hypothesis test (G test) is performed to exclude outlier variances. This is the confidence level of that hypothesis test. See https://doi.org/10.1016/j.bios.2022.114133 for more details.
 6. Confidence Level for LOD Interval (%): confidence level for the confidence interval of the LOD.
 
-<img src="screenshots/LOD_calcs_labelled.png" width="500">
+<img src="screenshots/LOD_calcs_labelled.png" width="547">
 
 Then click 'Fit'
 
@@ -89,23 +89,30 @@ Secondly with a unit adjustment from fM to M:
 Save or clear plot using the buttons on the bottom right.
 
 ### T tests
+
+Two LODs can be compared using a t test:
+
 <img src="screenshots/ttest_1.png" width="500">
 
-Select the comparator (control) file, to which all other files will be compared, using the 'Select file' button. The file must be a .mat file saved previously in the 'LOD calculation' tab.
-
-Select single or multiple comparison files using the 'Select file(s)' button. The files must be the .mat files saved previously in the 'LOD calculation' tab.
+Select the two files to be compared with the 'Select file 1' and 'Select file 2' buttons. The file must be a .mat file saved previously in the 'LOD calculation' tab.
 
 <img src="screenshots/ttest_2.png" width="500">
 
-**NOTE: all files must have the same units.**
+**NOTE: files must have the same units.**
 
 Set the confidence level for the LOD confidence intervals.
 
 As previously, select which files to compare and click 'Compare'. Note: each file must have a unique name otherwise it will not run.
 
-The results appear in a table below. They can then be exported to a .xlsx file.
+The results appear below:
 
 <img src="screenshots/ttest_3.png" width="500">
+
+### ANOVA
+
+When comparing more than two LODs, ANOVA must be used to prevent type 1 errors (false-positive significance). There is now a tab for performing ANOVA testing:
+
+<img src="screenshots/anova1.png" width="500">
 
 ## Test files
 ### Linear model fit
