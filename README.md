@@ -114,6 +114,27 @@ When comparing more than two LODs, ANOVA must be used to prevent type 1 errors (
 
 <img src="screenshots/anova1.png" width="500">
 
+First, select the files to compare using the 'Select files' button:
+
+<img src="screenshots/anova2.png" width="500">
+
+**NOTE: files must have the same units.**
+
+ANOVA evaluated the null hypothesis that all LOD values are equal, and gives a corresponding single p-value for all LODs. Post-hoc comparisons use the results of the ANOVA to tell you which LODs are significantly different from whcih other means.
+
+To perform, set the confidence level for the LOD post-hoc tests. Then choose which post-hoc test to use:
+
+- Tukey-Kramer: compares each LOD to all the other LODs, so best used when there is no heirarchy
+- Dunnett: compares all LODs to a signle reference LOD, so best used when there is an existing reference/gold-standard assay. The first dataset in the file list is used as the reference dataset, so make sure to select it on its own first with the 'Select files' dialogue, click open, then repeat selecting all the other files (singly or multiply).
+
+Click 'Compare' to perform the ANOVA:
+
+<img src="screenshots/anova3.png" width="500">
+
+The one-way ANOVA results are diplayed in the box on the left, and the post-hoc testing is displayed in the table on the right. The difference of the log LODs is displayed along with confidence intervals at the confidence level set previously and the p-value of each comparison. If the confidence interval includes 0, the difference is not significant at that level. Depending on the size of your window, you may have to scroll left to see the whole table:
+
+<img src="screenshots/anova4.png" width="500">
+
 ## Test files
 ### Linear model fit
 
