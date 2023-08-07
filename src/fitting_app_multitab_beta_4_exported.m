@@ -923,7 +923,7 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
             end
         end
 
-        % Callback function: not associated with a component
+        % Callback function
         function RemovefilessButtonPushed(app, event)
 
         end
@@ -962,7 +962,7 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
             app.TextArea_3.Value=txt;
         end
 
-        % Callback function: not associated with a component
+        % Callback function
         function ExportButtonPushed(app, event)
             filter = {'*.xlsx'};
             [filepath,name,~] = fileparts(app.Dataset1EditField.Value);
@@ -1099,18 +1099,11 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
                 end
                 [~,name,~] = fileparts(items_list{i});
                 names{i}=name;
-                rmse(i)=M.fitresult.RMSE;
-                aicc(i)=M.fitresult.ModelCriterion.AICc;
-                LODs(i)=M.LOD;
                 stdErrors(i)=M.logplus2_LOD_SE;
                 means(i)=M.logplus2_LOD;
-                Ns(i)=M.numReps_Total;
                 fitpars = M.fitresult.Coefficients.Estimate;
-                nParams(i)=length(fitpars);
-                logplus2_LOD_lower95 = norminv(gamma/2,M.logplus2_LOD,M.logplus2_LOD_SE);
-                logplus2_LOD_upper95 = norminv(1-(gamma/2),M.logplus2_LOD,M.logplus2_LOD_SE);
-                lod_lowers(i) = (10^logplus2_LOD_lower95 - 2);
-                lod_uppers(i) = (10^logplus2_LOD_upper95 - 2);
+                nParams=length(fitpars);
+                Ns(i)=M.numReps_Total-nParams;
             end
             % Number of groups
             k = numel(means);
@@ -1158,10 +1151,10 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
             app.TextArea_2.Value=txt;
             app.T = table(stats.gnames(c(:,1)),stats.gnames(c(:,2)),arrayfun(@(x)sprintf('%.2e',x),c(:,3),'UniformOutput',false),arrayfun(@(x)sprintf('%.2e',x),c(:,4),'UniformOutput',false),arrayfun(@(x)sprintf('%.2e',x),c(:,5),'UniformOutput',false),arrayfun(@(x)sprintf('%.2e',x),c(:,6),'UniformOutput',false),'VariableNames',{'Comparison 1','Comparison 2',sprintf('Lower CI of log[LOD (%s)] difference',M.concUnits),sprintf('Log[LOD (%s)] difference',M.concUnits),sprintf('Upper CI of log[LOD (%s)] difference',M.concUnits),'P-Value'});
             parentPosition = get(app.ANOVATab, 'position');
-            uitablePosition = [parentPosition(3)*.3 20 parentPosition(3)*.7 parentPosition(4)*.5];
+            uitablePosition = [parentPosition(3)*.3 20 parentPosition(3)*.7 parentPosition(4)*.6];
+            app.TextArea_2.Position = [20 20 parentPosition(3)*.25 parentPosition(4)*.6];
             uit = uitable(app.ANOVATab,'Data',app.T);
             uit.Position=uitablePosition;
-            app.ExportButton.Enable = 'on';
         end
     end
 
@@ -1641,6 +1634,7 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
 
             % Create TextArea_2
             app.TextArea_2 = uitextarea(app.ANOVATab);
+            app.TextArea_2.Editable = 'off';
             app.TextArea_2.Placeholder = 'ANOVA results';
             app.TextArea_2.Position = [20 17 163 272];
 
