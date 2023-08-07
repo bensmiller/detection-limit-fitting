@@ -72,17 +72,17 @@ When all the files are loaded, use Ctrl/Shift and click to select which files to
 
 **NOTE: all files must have the same units.**
 
-If you want to adjust the units, for example to convert from aM to M, you should fill 'Order of magnitude adjustment' with the number of orders of magnitude between your old and new units, taking account of the positive/negative sign (i.e. -18 for aM -> M). Also, fill in the 'New units'.
+If you want to adjust the units, for example to convert from fM to M, you should fill 'Order of magnitude adjustment' with the number of orders of magnitude between your old and new units, taking account of the positive/negative sign (i.e. -15 for fM -> M). Also, fill in the 'New units'.
 
 Then select 'Colours' to choose the colourscheme. They are ColorBrewer schemes (can be browsed here: https://colorbrewer2.org/)
 
 Click 'Plot selected files'
 
-First without adjusting the units (leaving those boxes), so in aM:
+First without adjusting the units (leaving those boxes), so in fM:
 
 <img src="screenshots/multiple_3.png" width="500">
 
-Secondly with a unit adjustment from aM to M:
+Secondly with a unit adjustment from fM to M:
 
 <img src="screenshots/multiple_4.png" width="500">
 
@@ -110,12 +110,12 @@ The results appear in a table below. They can then be exported to a .xlsx file.
 ## Test files
 ### Linear model fit
 
-Use test_file_1.xlsx. Use model "Linear", and concentration units "zM"
+Use test_file_1.xlsx. Use model "Linear", and concentration units "fM"
 
 Data from: Miller, B.S., Bezinge, L., Gliddon, H.D. et al. Spin-enhanced nanodiamond biosensing for ultrasensitive diagnostics. Nature 587, 588–593 (2020). https://doi.org/10.1038/s41586-020-2917-1
 ### Langmuir, 4PL and 5PL fits
 
-Use test_file_2.xlsx and test_file_3.xlsx. Use model "Langmuir", "4PL" or "5PL" and concentration units "aM"
+Use test_file_2.xlsx and test_file_3.xlsx. Use model "Langmuir", "4PL" or "5PL" and concentration units "fM"
 
 Data from: Benjamin S. Miller, Michael R. Thomas, Matthew Banner et al. Sub-picomolar lateral flow antigen detection with two-wavelength imaging of composite nanoparticles. Biosensors and Bioelectronics, 114133 (2022). https://doi.org/10.1016/j.bios.2022.114133
 
