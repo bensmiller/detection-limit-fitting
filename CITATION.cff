@@ -12,5 +12,17 @@ authors:
     family-names: Miller
     affiliation: University College London
     orcid: 'https://orcid.org/0000-0003-3032-018X'
-version: 0.1
-date-released: 2022-03-10
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.8346294
+repository-code: 'https://github.com/bensmiller/detection-limit-fitting'
+repository: >-
+  https://www.mathworks.com/matlabcentral/fileexchange/108694-detection-limit-fitting
+abstract: >-
+  Software for fitting robust detection limits (LODs) and
+  confidence intervals to serial dilution data. Fits can
+  then be plotted individually or multiple on the same axes,
+  and compared using t tests or ANOVA.
+license: GPL-3.0+
+version: '1.0'
+date-released: '2023-09-14'
