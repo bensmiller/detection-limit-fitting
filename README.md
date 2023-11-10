@@ -71,7 +71,7 @@ Then click 'Fit'
 
 The data and fitted model should be plotted in the box on the left, and the LOD and fit statistics in the box underneath.
 
-<img src="screenshots/LOD_calcs_fitted.png" width="500">
+<img src="screenshots/LOD_calcs_fitted.png" width="500"><img src="screenshots/LOD_calcs_fitted_nolog.png" width="500">
 
 If the fit is unsuccessful, try a different model. If still unsuccessful, please use the forum to discuss.
 
