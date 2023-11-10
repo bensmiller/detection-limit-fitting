@@ -46,7 +46,15 @@ Click 'File browse' to select a file. There are then multiple parameters to sele
 7. Confidence Level for LOD Interval (%): confidence level for the confidence interval of the LOD.
 8. This gives you the option to specify initial guesses for the fitting parameters. If set to '-Inf', it uses default guesses. Equations and default initial guesses are below:
 
-Linear: $y=\frac{a\cdot10^x}{c+10^x}+d$
+Linear with Y log transform: $y=log_{10}(a\cdot10^x+b)$
+
+Linear without Y log transform: $y=a\cdot10^x+b)$
+
+Langmuir: $y=\frac{a\cdot10^x}{c+10^x}+d$
+
+4PL: $y=\frac{a-d}{1+\left(\frac{x}{c}\right)^b}+d$
+
+5PL: $y=\frac{a-d}{\left[1+\left(\frac{x}{c}\right)^b\right]^g}+d$
 
 This sentence uses `$` delimiters to show math inline:  $\sqrt{3x-1}+(1+x)^2$
 
