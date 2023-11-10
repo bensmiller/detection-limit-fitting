@@ -8,7 +8,9 @@ If you have feature requests or questions, or would like to get help with proble
 
 ## Latest Revisions
 1.  **NEW FEATURE: ANOVA testing**
-2.  Changed t test to just be between two files, now that ANOVA is implemented.
+2.  **NEW FEATURE: toggle Y log transform**
+3.  **NEW FEATURE: can now modify initial guesses for fitted parameters**
+4.  Changed t test to just be between two files, now that ANOVA is implemented.
 
 
 ## Installation
