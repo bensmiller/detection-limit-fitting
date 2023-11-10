@@ -46,7 +46,9 @@ Click 'File browse' to select a file. There are then multiple parameters to sele
 7. Confidence Level for LOD Interval (%): confidence level for the confidence interval of the LOD.
 8. This gives you the option to specify initial guesses for the fitting parameters. If set to '-Inf', it uses default guesses. Equations and default initial guesses are below:
 
-Linear:$y=\frac{a\cdot10^x}{c+10^x}+d$
+Linear: $y=\frac{a\cdot10^x}{c+10^x}+d$
+
+This sentence uses `$` delimiters to show math inline:  $\sqrt{3x-1}+(1+x)^2$
 
 | **Model** | **Parameters** |                              |                              |             |     |
 |-----------|:--------------:|:----------------------------:|:----------------------------:|:-----------:|:---:|
