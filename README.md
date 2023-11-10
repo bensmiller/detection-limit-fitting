@@ -58,9 +58,9 @@ Langmuir: $y=\frac{a\cdot10^x}{c+10^x}+d$
 
 This sentence uses `$` delimiters to show math inline:  $\sqrt{3x-1}+(1+x)^2$
 
-| **Model** | **Parameters** |                              |                              |             |     |
+| **Model** | **Parameters**    |
 |-----------|:--------------:|:----------------------------:|:----------------------------:|:-----------:|:---:|
-|           | a              | b                            | c                            | d           | e   |
+|           | a              | b                            | c                            | d           | g   |
 | Linear    | 1              | 0                            | n/a                          | n/a         | n/a |
 | Langmuir  | max Y value    | median analyte concentration | 0                            | n/a         | n/a |
 | 4PL       | 0              | 5                            | median analyte concentration | max Y value | n/a |
