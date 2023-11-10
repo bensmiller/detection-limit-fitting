@@ -44,7 +44,16 @@ Click 'File browse' to select a file. There are then multiple parameters to sele
 5. Blank False Positive Rate (%): input the value for the confidence level of the blank cutoff (lower value gives a high blank cutoff and higher LOD, giving a higher probability that a positive result is a real positive).
 6. Variance Outlier Confidence Level (%): when finding the 'characteristic variance' to calculate the cutoff, a hypothesis test (G test) is performed to exclude outlier variances. This is the confidence level of that hypothesis test. See https://doi.org/10.1016/j.bios.2022.114133 for more details.
 7. Confidence Level for LOD Interval (%): confidence level for the confidence interval of the LOD.
-8. This gives you the option to specify initial guesses for the fitting parameters. If set to '-Inf', it uses default guesses. Guesses and paramters in the table below:
+8. This gives you the option to specify initial guesses for the fitting parameters. If set to '-Inf', it uses default guesses. Equations and default initial guesses are below:
+Linear: &y=\frac{a\cdot10^x}{c+10^x}+d$
+
+| **Model** | **Parameters** |                              |                              |             |     |
+|-----------|:--------------:|:----------------------------:|:----------------------------:|:-----------:|:---:|
+|           | a              | b                            | c                            | d           | e   |
+| Linear    | 1              | 0                            | n/a                          | n/a         | n/a |
+| Langmuir  | max Y value    | median analyte concentration | 0                            | n/a         | n/a |
+| 4PL       | 0              | 5                            | median analyte concentration | max Y value | n/a |
+| 5PL       | 0              | 5                            | median analyte concentration | max Y value | 5   |
 
 <img src="screenshots/LOD_calcs_labelled.png" width="547">
 
