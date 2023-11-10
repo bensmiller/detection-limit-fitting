@@ -162,10 +162,23 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
          db = -log10(exp(1))*a/(10.^x-b);
          y = [da; db];
         end
+
+        function y = gradfuninv_Lin_nolog(app,pars, x)
+         a = pars(1);
+         b = pars(2);
+         da = -log10(exp(1))./(a*(x-b));
+         db = -log10(exp(1))*a/(x-b);
+         y = [da; db];
+        end
         
         function y = dfitfuninv_Lin(app,x, pars)
          b = pars(2);
          y = 10.^x./(10.^x-b);
+        end
+
+        function y = dfitfuninv_Lin_nolog(app,x, pars)
+         b = pars(2);
+         y = 1/(log(10)*(x-b));
         end
         
         %Langmuir model:
@@ -320,7 +333,11 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
             cla(app.UIAxes,'reset')
             switch app.ModelListBox.Value
                 case 'Linear'
-                    ft = @(b,xdata)(log10(b(1)*10.^xdata+b(2))); %Linear fit (10^y=a*10^x+b, where a is the gradient and b is the y intercept)
+                    if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                        ft = @(b,xdata)(log10(b(1)*10.^xdata+b(2))); %Linear fit (10^y=a*10^x+b, where a is the gradient and b is the y intercept)
+                    else
+                        ft = @(b,xdata)(b(1)*10.^xdata+b(2)); %Linear fit (10^y=a*10^x+b, where a is the gradient and b is the y intercept)
+                    end
                     b0 = [1 0]; %starting points
                 case 'Langmuir'
                     ft = @(b,xdata)((((b(1))*(10.^xdata))./(b(2)+(10.^xdata)))+b(3)); %Langmuir curve (using 10^x instead of x in common equation)
@@ -376,9 +393,15 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
             %Calculate LOD from fit using inverse of fitting equations
             switch app.ModelListBox.Value
                 case 'Linear'
-                    app.logplus2_LOD = log10((10^app.Ld-fitpars(2))/fitpars(1));
-                    gradinv = gradfuninv_Lin(app,fitpars, app.Ld);
-                    dfitinv = dfitfuninv_Lin(app,app.Ld, fitpars);
+                    if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                        app.logplus2_LOD = log10((10^app.Ld-fitpars(2))/fitpars(1));
+                        gradinv = gradfuninv_Lin(app,fitpars, app.Ld);
+                        dfitinv = dfitfuninv_Lin(app,app.Ld, fitpars);
+                    else
+                        app.logplus2_LOD = log10((app.Ld-fitpars(2))/fitpars(1));
+                        gradinv = gradfuninv_Lin_nolog(app,fitpars, app.Ld);
+                        dfitinv = dfitfuninv_Lin_nolog(app,app.Ld, fitpars);
+                    end
                 case 'Langmuir'
                     app.logplus2_LOD = log10(fitpars(2)*(app.Ld-fitpars(3))/(fitpars(1)+fitpars(3)-app.Ld));
                     gradinv = gradfuninv_Lang(app,fitpars, app.Ld);
