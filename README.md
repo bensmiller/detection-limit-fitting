@@ -58,7 +58,7 @@ Langmuir: $y=\frac{a\cdot10^x}{c+10^x}+d$
 
 This sentence uses `$` delimiters to show math inline:  $\sqrt{3x-1}+(1+x)^2$
 
-| **Model** | **Parameters**    |
+| **Model** | **Parameters**                                                                                   |
 |-----------|:--------------:|:----------------------------:|:----------------------------:|:-----------:|:---:|
 |           | a              | b                            | c                            | d           | g   |
 | Linear    | 1              | 0                            | n/a                          | n/a         | n/a |
