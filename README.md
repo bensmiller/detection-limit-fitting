@@ -37,12 +37,14 @@ Data must be in .xlsx files with two columns. Column 1 must be concentration val
 <img src="screenshots/LOD_calcs.png" width="500">
 
 Click 'File browse' to select a file. There are then multiple parameters to select:
-1. Model: chose between the four models. See https://doi.org/10.1016/j.bios.2022.114133 for descriptions of the models.
-2. Concentration units: input the units of your analyte concentrations.
-3. LOD False Negative Rate (%): input the value for the confidence level of a positive sample at the LOD (lower value gives higher LOD and a higher probability that a negative result is a real negative).
-4. Blank False Positive Rate (%): input the value for the confidence level of the blank cutoff (lower value gives a high blank cutoff and higher LOD, giving a higher probability that a positive result is a real positive).
-5. Variance Outlier Confidence Level (%): when finding the 'characteristic variance' to calculate the cutoff, a hypothesis test (G test) is performed to exclude outlier variances. This is the confidence level of that hypothesis test. See https://doi.org/10.1016/j.bios.2022.114133 for more details.
-6. Confidence Level for LOD Interval (%): confidence level for the confidence interval of the LOD.
+1. Y axis log transform: set to 'Yes' if the variance of your data is proportional to your signal (i.e. variance is some percentage of signal, so high concentration samples have higher absolute variance). This will normalise the variances, so there should be no scaling of variance with concentration - you can check by looking at error bars. If the variance does not scale with signal (it's constant across the concentration/signal range), set to 'No'.
+2. Model: chose between the four models. See https://doi.org/10.1016/j.bios.2022.114133 for descriptions of the models.
+3. Concentration units: input the units of your analyte concentrations.
+4. LOD False Negative Rate (%): input the value for the confidence level of a positive sample at the LOD (lower value gives higher LOD and a higher probability that a negative result is a real negative).
+5. Blank False Positive Rate (%): input the value for the confidence level of the blank cutoff (lower value gives a high blank cutoff and higher LOD, giving a higher probability that a positive result is a real positive).
+6. Variance Outlier Confidence Level (%): when finding the 'characteristic variance' to calculate the cutoff, a hypothesis test (G test) is performed to exclude outlier variances. This is the confidence level of that hypothesis test. See https://doi.org/10.1016/j.bios.2022.114133 for more details.
+7. Confidence Level for LOD Interval (%): confidence level for the confidence interval of the LOD.
+8. This gives you the option to specify initial guesses for the fitting parameters. If set to '-Inf', it uses default guesses. Guesses and paramters in the table below:
 
 <img src="screenshots/LOD_calcs_labelled.png" width="547">
 
