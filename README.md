@@ -56,8 +56,6 @@ Langmuir: $y=\frac{a\cdot10^x}{c+10^x}+d$
 
 5PL: $y=\frac{a-d}{\left[1+\left(\frac{x}{c}\right)^b\right]^g}+d$
 
-This sentence uses `$` delimiters to show math inline:  $\sqrt{3x-1}+(1+x)^2$
-
 The table below contains the default initial guesses for parameters $a$, $b$, $c$, $d$, and $g$ from the equations above:
 
 | **Model** | **$a$**              | **$b$**                            | **$c$**                            | **$d$**           | **$g$**   |
