@@ -5,6 +5,14 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
         LODcalculationsUIFigure        matlab.ui.Figure
         TabGroup                       matlab.ui.container.TabGroup
         LODcalculationTab              matlab.ui.container.Tab
+        YlogtransformSwitch            matlab.ui.control.Switch
+        YlogtransformSwitchLabel       matlab.ui.control.Label
+        EditField_5                    matlab.ui.control.NumericEditField
+        EditField_4                    matlab.ui.control.NumericEditField
+        EditField_3                    matlab.ui.control.NumericEditField
+        EditField_2                    matlab.ui.control.NumericEditField
+        ParameterinitialguessesEditField  matlab.ui.control.NumericEditField
+        ParameterinitialguessesEditFieldLabel  matlab.ui.control.Label
         ChangeFontButton               matlab.ui.control.Button
         ConfidenceLevelforLODIntervalEditFieldLabel  matlab.ui.control.Label
         ConfidenceLevelforLODIntervalEditField  matlab.ui.control.NumericEditField
@@ -278,10 +286,16 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
             pos_temp=A(A(:,1)~=0,2);
             app.pixInt=[];
             app.pixInt.negCtrl=A(A(:,1)==0,2)';
-            app.pixInt.negCtrl=log10(app.pixInt.negCtrl+2);
+            if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                app.pixInt.negCtrl=log10(app.pixInt.negCtrl+2);
+            end
             samp_size=zeros(length(testConc),1);
             for i=1:length(testConc)
-                app.pixInt.test{i}=(log10(pos_temp(ic==i)+2)-mean(app.pixInt.negCtrl))';
+                if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                    app.pixInt.test{i}=(log10(pos_temp(ic==i)+2)-mean(app.pixInt.negCtrl))';
+                else
+                    app.pixInt.test{i}=(pos_temp(ic==i)-mean(app.pixInt.negCtrl))';
+                end
                 pixIntVar.test(i)=var(app.pixInt.test{i});
                 samp_size(i)=length(app.pixInt.test{i});
             end
@@ -320,6 +334,21 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
                 otherwise %defaults back to Langmuir curve
                     ft = @(b,xdata)((((b(1))*(10.^xdata))./(b(2)+(10.^xdata)))+b(3)); %Langmuir curve
                     b0 = [max(yData) median(testConc) 0]; %starting points 
+            end
+            if app.ParameterinitialguessesEditField.Value~=-Inf
+                b0(1)=app.ParameterinitialguessesEditField.Value;
+            end
+            if app.EditField_2.Value~=-Inf
+                b0(2)=app.EditField_2.Value;
+            end
+            if app.EditField_3.Value~=-Inf && length(b0)>2
+                b0(3)=app.EditField_3.Value;
+            end
+            if app.EditField_4.Value~=-Inf && length(b0)>3
+                b0(4)=app.EditField_4.Value;
+            end
+            if app.EditField_5.Value~=-Inf && length(b0)>4
+                b0(5)=app.EditField_5.Value;
             end
             opt = statset('MaxFunEvals', 1e5, 'MaxIter', 1e5, 'TolX', 1e-18);
             app.fitresult = fitnlm(xData, yData, ft,b0, 'options', opt);
@@ -426,7 +455,11 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
             hLODlower95 = plot(app.UIAxes,[app.LOD_lower95,app.LOD_lower95],[y_limits(1),interp1(fitData_x,ypred,app.LOD_lower95)],':','color',cols(4,:),'linewidth',1); %LOD, lower 95% confidence interval line (vertical)
             plot(app.UIAxes,[app.LOD_upper95,app.LOD_upper95],[y_limits(1),interp1(fitData_x,ypred,app.LOD_upper95)],':','color',cols(4,:),'linewidth',1); %LOD, upper 95% confidence interval line (vertical)
             xlabel(app.UIAxes,['Analyte Concentration (',app.concUnits,')']);
-            ylabel(app.UIAxes,'Log Normalized Y Value');
+            if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                ylabel(app.UIAxes,'Log Normalized Y Value');
+            else
+                ylabel(app.UIAxes,'Normalized Y Value');
+            end
             set(app.UIAxes, 'xScale', 'log')
             xticks(app.UIAxes,10.^(floor(log10(zeroMark)):ceil(log10(max(app.allTestData_testConc)))))
             xtickvals=get(app.UIAxes,'XTickLabel');
@@ -557,7 +590,8 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
                 logplus2_LOD=app.logplus2_LOD;
                 numReps_Total=app.numReps_Total;
                 concUnits=app.concUnits;
-                save(fullfile(path,file),'xn','yn','stdn','allTestData_testConc','allTestData_pixInt','allData_pixInt','Lc','Ld','LOD','LOD_upper95','LOD_lower95','numReps_negCtrl','pixInt','allTestData_testConc_logplus2','fitresult','logplus2_LOD_SE','logplus2_LOD','numReps_Total','concUnits');
+                logY=app.YlogtransformSwitch.Value;
+                save(fullfile(path,file),'xn','yn','stdn','allTestData_testConc','allTestData_pixInt','allData_pixInt','Lc','Ld','LOD','LOD_upper95','LOD_lower95','numReps_negCtrl','pixInt','allTestData_testConc_logplus2','fitresult','logplus2_LOD_SE','logplus2_LOD','numReps_Total','concUnits','logY');
                 figure(app.LODcalculationsUIFigure)
             end
         end
@@ -651,6 +685,10 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
                 if string(M.concUnits)~=app.units
                     errordlg('Units not the same')
                     error('Units not the same')
+                end
+                if ~strcmp(M.logY,N.logY)
+                    errordlg('Y transformation not the same')
+                    error('Y transformation not the same')
                 end
                 gap_tolerance=0.32;
                 if M.LOD_lower95<min(M.allTestData_testConc) && M.LOD_lower95>0
@@ -749,7 +787,11 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
                 else
                     xlabel(app.UIAxes2,['Analyte Concentration (',app.NewunitsEditField.Value,')']);
                 end
-                ylabel(app.UIAxes2,'Log Normalized Y Value');
+                if strcmp(N.logY,'Yes')
+                    ylabel(app.UIAxes2,'Log Normalized Y Value');
+                else
+                    ylabel(app.UIAxes2,'Normalized Y Value');
+                end
                 set(app.UIAxes2, 'xScale', 'log')
                 tk=10.^(floor(log10(app.zeroMark2)):ceil(log10(max(M.allTestData_testConc))));
                 xticks(app.UIAxes2,tk)
@@ -1211,105 +1253,148 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
             % Create ModelListBox
             app.ModelListBox = uilistbox(app.LODcalculationTab);
             app.ModelListBox.Items = {'Linear', 'Langmuir', '4PL', '5PL'};
-            app.ModelListBox.Position = [83 335 100 74];
+            app.ModelListBox.Position = [17 319 100 74];
             app.ModelListBox.Value = 'Linear';
 
             % Create ModelListBoxLabel
             app.ModelListBoxLabel = uilabel(app.LODcalculationTab);
             app.ModelListBoxLabel.HorizontalAlignment = 'right';
-            app.ModelListBoxLabel.Position = [30 385 38 22];
+            app.ModelListBoxLabel.Position = [42 396 38 22];
             app.ModelListBoxLabel.Text = 'Model';
 
             % Create SaveFigureButton
             app.SaveFigureButton = uibutton(app.LODcalculationTab, 'push');
             app.SaveFigureButton.ButtonPushedFcn = createCallbackFcn(app, @SaveFigureButtonPushed, true);
             app.SaveFigureButton.Enable = 'off';
-            app.SaveFigureButton.Position = [67 66 100 22];
+            app.SaveFigureButton.Position = [20 37 100 22];
             app.SaveFigureButton.Text = 'Save Figure';
 
             % Create SaveDataButton
             app.SaveDataButton = uibutton(app.LODcalculationTab, 'push');
             app.SaveDataButton.ButtonPushedFcn = createCallbackFcn(app, @SaveDataButtonPushed, true);
             app.SaveDataButton.Enable = 'off';
-            app.SaveDataButton.Position = [67 37 100 22];
+            app.SaveDataButton.Position = [20 9 100 22];
             app.SaveDataButton.Text = 'Save Data';
 
             % Create SavematButton
             app.SavematButton = uibutton(app.LODcalculationTab, 'push');
             app.SavematButton.ButtonPushedFcn = createCallbackFcn(app, @SavematButtonPushed, true);
             app.SavematButton.Enable = 'off';
-            app.SavematButton.Position = [67 9 100 22];
+            app.SavematButton.Position = [136 9 100 22];
             app.SavematButton.Text = 'Save .mat';
 
             % Create FitButton
             app.FitButton = uibutton(app.LODcalculationTab, 'push');
             app.FitButton.ButtonPushedFcn = createCallbackFcn(app, @FitButtonPushed, true);
             app.FitButton.Enable = 'off';
-            app.FitButton.Position = [67 132 100 22];
+            app.FitButton.Position = [79 67 100 22];
             app.FitButton.Text = 'Fit';
 
             % Create ConcentrationUnitsEditField
             app.ConcentrationUnitsEditField = uieditfield(app.LODcalculationTab, 'text');
-            app.ConcentrationUnitsEditField.Position = [138 297 82 22];
+            app.ConcentrationUnitsEditField.Position = [138 291 82 22];
             app.ConcentrationUnitsEditField.Value = 'M';
 
             % Create ConcentrationUnitsEditFieldLabel
             app.ConcentrationUnitsEditFieldLabel = uilabel(app.LODcalculationTab);
             app.ConcentrationUnitsEditFieldLabel.HorizontalAlignment = 'right';
-            app.ConcentrationUnitsEditFieldLabel.Position = [12 297 111 22];
+            app.ConcentrationUnitsEditFieldLabel.Position = [12 291 111 22];
             app.ConcentrationUnitsEditFieldLabel.Text = 'Concentration Units';
 
             % Create LODFalseNegativeRateEditField
             app.LODFalseNegativeRateEditField = uieditfield(app.LODcalculationTab, 'numeric');
-            app.LODFalseNegativeRateEditField.Position = [191 267 29 22];
+            app.LODFalseNegativeRateEditField.Position = [191 261 29 22];
             app.LODFalseNegativeRateEditField.Value = 5;
 
             % Create LODFalseNegativeRateEditFieldLabel
             app.LODFalseNegativeRateEditFieldLabel = uilabel(app.LODcalculationTab);
             app.LODFalseNegativeRateEditFieldLabel.HorizontalAlignment = 'right';
-            app.LODFalseNegativeRateEditFieldLabel.Position = [7 267 169 22];
+            app.LODFalseNegativeRateEditFieldLabel.Position = [7 261 169 22];
             app.LODFalseNegativeRateEditFieldLabel.Text = 'LOD False Negative Rate (%)';
 
             % Create BlankFalsePositiveRateEditField
             app.BlankFalsePositiveRateEditField = uieditfield(app.LODcalculationTab, 'numeric');
-            app.BlankFalsePositiveRateEditField.Position = [191 238 29 22];
+            app.BlankFalsePositiveRateEditField.Position = [191 232 29 22];
             app.BlankFalsePositiveRateEditField.Value = 5;
 
             % Create BlankFalsePositiveRateEditFieldLabel
             app.BlankFalsePositiveRateEditFieldLabel = uilabel(app.LODcalculationTab);
             app.BlankFalsePositiveRateEditFieldLabel.HorizontalAlignment = 'right';
-            app.BlankFalsePositiveRateEditFieldLabel.Position = [7 238 169 22];
+            app.BlankFalsePositiveRateEditFieldLabel.Position = [7 232 169 22];
             app.BlankFalsePositiveRateEditFieldLabel.Text = 'Blank False Positive Rate (%)';
 
             % Create VarianceOutlierConfidenceLevelEditField_2
             app.VarianceOutlierConfidenceLevelEditField_2 = uieditfield(app.LODcalculationTab, 'numeric');
-            app.VarianceOutlierConfidenceLevelEditField_2.Position = [191 208 29 22];
+            app.VarianceOutlierConfidenceLevelEditField_2.Position = [191 202 29 22];
             app.VarianceOutlierConfidenceLevelEditField_2.Value = 5;
 
             % Create VarianceOutlierConfidenceLevelLabel
             app.VarianceOutlierConfidenceLevelLabel = uilabel(app.LODcalculationTab);
             app.VarianceOutlierConfidenceLevelLabel.HorizontalAlignment = 'right';
-            app.VarianceOutlierConfidenceLevelLabel.Position = [7 202 169 28];
+            app.VarianceOutlierConfidenceLevelLabel.Position = [7 196 169 28];
             app.VarianceOutlierConfidenceLevelLabel.Text = {'Variance Outlier Confidence'; 'Level (%)'};
 
             % Create ConfidenceLevelforLODIntervalEditField
             app.ConfidenceLevelforLODIntervalEditField = uieditfield(app.LODcalculationTab, 'numeric');
-            app.ConfidenceLevelforLODIntervalEditField.Position = [191 178 29 22];
+            app.ConfidenceLevelforLODIntervalEditField.Position = [191 172 29 22];
             app.ConfidenceLevelforLODIntervalEditField.Value = 5;
 
             % Create ConfidenceLevelforLODIntervalEditFieldLabel
             app.ConfidenceLevelforLODIntervalEditFieldLabel = uilabel(app.LODcalculationTab);
             app.ConfidenceLevelforLODIntervalEditFieldLabel.HorizontalAlignment = 'right';
             app.ConfidenceLevelforLODIntervalEditFieldLabel.WordWrap = 'on';
-            app.ConfidenceLevelforLODIntervalEditFieldLabel.Position = [12 172 164 28];
+            app.ConfidenceLevelforLODIntervalEditFieldLabel.Position = [12 166 164 28];
             app.ConfidenceLevelforLODIntervalEditFieldLabel.Text = 'Confidence Level for LOD Interval (%)';
 
             % Create ChangeFontButton
             app.ChangeFontButton = uibutton(app.LODcalculationTab, 'push');
             app.ChangeFontButton.ButtonPushedFcn = createCallbackFcn(app, @ChangeFontButtonPushed, true);
             app.ChangeFontButton.Enable = 'off';
-            app.ChangeFontButton.Position = [67 96 100 22];
+            app.ChangeFontButton.Position = [136 37 100 22];
             app.ChangeFontButton.Text = 'Change Font';
+
+            % Create ParameterinitialguessesEditFieldLabel
+            app.ParameterinitialguessesEditFieldLabel = uilabel(app.LODcalculationTab);
+            app.ParameterinitialguessesEditFieldLabel.HorizontalAlignment = 'right';
+            app.ParameterinitialguessesEditFieldLabel.Position = [8 142 140 22];
+            app.ParameterinitialguessesEditFieldLabel.Text = 'Parameter initial guesses';
+
+            % Create ParameterinitialguessesEditField
+            app.ParameterinitialguessesEditField = uieditfield(app.LODcalculationTab, 'numeric');
+            app.ParameterinitialguessesEditField.Position = [10 121 66 22];
+            app.ParameterinitialguessesEditField.Value = -Inf;
+
+            % Create EditField_2
+            app.EditField_2 = uieditfield(app.LODcalculationTab, 'numeric');
+            app.EditField_2.Position = [83 121 66 22];
+            app.EditField_2.Value = -Inf;
+
+            % Create EditField_3
+            app.EditField_3 = uieditfield(app.LODcalculationTab, 'numeric');
+            app.EditField_3.Position = [154 121 66 22];
+            app.EditField_3.Value = -Inf;
+
+            % Create EditField_4
+            app.EditField_4 = uieditfield(app.LODcalculationTab, 'numeric');
+            app.EditField_4.Position = [10 96 66 22];
+            app.EditField_4.Value = -Inf;
+
+            % Create EditField_5
+            app.EditField_5 = uieditfield(app.LODcalculationTab, 'numeric');
+            app.EditField_5.Position = [83 96 66 22];
+            app.EditField_5.Value = -Inf;
+
+            % Create YlogtransformSwitchLabel
+            app.YlogtransformSwitchLabel = uilabel(app.LODcalculationTab);
+            app.YlogtransformSwitchLabel.HorizontalAlignment = 'center';
+            app.YlogtransformSwitchLabel.Position = [131 395 86 22];
+            app.YlogtransformSwitchLabel.Text = 'Y log transform';
+
+            % Create YlogtransformSwitch
+            app.YlogtransformSwitch = uiswitch(app.LODcalculationTab, 'slider');
+            app.YlogtransformSwitch.Items = {'No', 'Yes'};
+            app.YlogtransformSwitch.Position = [149 363 45 20];
+            app.YlogtransformSwitch.Value = 'Yes';
 
             % Create MultipleplotsTab
             app.MultipleplotsTab = uitab(app.TabGroup);
@@ -1461,12 +1546,12 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
             % Create OrderofmagnitudeadjustmentEditFieldLabel
             app.OrderofmagnitudeadjustmentEditFieldLabel = uilabel(app.MultipleplotsTab);
             app.OrderofmagnitudeadjustmentEditFieldLabel.HorizontalAlignment = 'right';
-            app.OrderofmagnitudeadjustmentEditFieldLabel.Position = [345 314 171 22];
+            app.OrderofmagnitudeadjustmentEditFieldLabel.Position = [114 344 171 22];
             app.OrderofmagnitudeadjustmentEditFieldLabel.Text = 'Order of magnitude adjustment';
 
             % Create OrderofmagnitudeadjustmentEditField
             app.OrderofmagnitudeadjustmentEditField = uieditfield(app.MultipleplotsTab, 'numeric');
-            app.OrderofmagnitudeadjustmentEditField.Position = [531 314 100 22];
+            app.OrderofmagnitudeadjustmentEditField.Position = [300 344 100 22];
 
             % Create NewunitsEditFieldLabel
             app.NewunitsEditFieldLabel = uilabel(app.MultipleplotsTab);
