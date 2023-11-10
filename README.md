@@ -73,6 +73,8 @@ The data and fitted model should be plotted in the box on the left, and the LOD 
 
 <img src="screenshots/LOD_calcs_fitted.png" width="500"><img src="screenshots/LOD_calcs_fitted_nolog.png" width="500">
 
+These images also show the difference between log-transformed (left) and non-log-transformed (right) Y data. In this case the non-log-transformed data has much larger error bars at high signals, whilst the log-transformed data has mroe uniform error bars. This indicates a log transformation should be used for this data.
+
 If the fit is unsuccessful, try a different model. If still unsuccessful, please use the forum to discuss.
 
 Save Figure: to save the plot in various formats
