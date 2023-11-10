@@ -45,7 +45,8 @@ Click 'File browse' to select a file. There are then multiple parameters to sele
 6. Variance Outlier Confidence Level (%): when finding the 'characteristic variance' to calculate the cutoff, a hypothesis test (G test) is performed to exclude outlier variances. This is the confidence level of that hypothesis test. See https://doi.org/10.1016/j.bios.2022.114133 for more details.
 7. Confidence Level for LOD Interval (%): confidence level for the confidence interval of the LOD.
 8. This gives you the option to specify initial guesses for the fitting parameters. If set to '-Inf', it uses default guesses. Equations and default initial guesses are below:
-Linear: &y=\frac{a\cdot10^x}{c+10^x}+d$
+
+Linear:$y=\frac{a\cdot10^x}{c+10^x}+d$
 
 | **Model** | **Parameters** |                              |                              |             |     |
 |-----------|:--------------:|:----------------------------:|:----------------------------:|:-----------:|:---:|
