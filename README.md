@@ -50,7 +50,7 @@ Click 'File browse' to select a file. There are then multiple parameters to sele
 
 Linear with Y log transform: $y=log_{10}(a\cdot10^x+b)$
 
-Linear without Y log transform: $y=a\cdot10^x+b)$
+Linear without Y log transform: $y=a\cdot10^x+b$
 
 Langmuir: $y=\frac{a\cdot10^x}{c+10^x}+d$
 
