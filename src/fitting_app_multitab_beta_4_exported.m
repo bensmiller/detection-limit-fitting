@@ -700,7 +700,7 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
                     cols=repmat(cols,ceil((app.plotCounter+length(items_list))/size(cols,1)),1);
                 end
             elseif app.ColoursListBox.Value=="Custom"
-                if isfile('colString.mat')
+                if isfile(fullfile(userpath,'colString.mat'))
                     C=load(fullfile(userpath,'colString.mat'));
                     cols=C.colString;
                     if app.plotCounter+length(items_list)>size(cols,1)
