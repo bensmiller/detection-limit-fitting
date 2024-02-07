@@ -37,6 +37,8 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
         UIAxes                         matlab.ui.control.UIAxes
         MultipleplotsTab               matlab.ui.container.Tab
         AddExtraPointsButton           matlab.ui.control.Button
+        ModifyaxestitlesButton         matlab.ui.control.Button
+        DefinecustomcoloursButton      matlab.ui.control.Button
         ChangeFontButton_2             matlab.ui.control.Button
         NewunitsEditField              matlab.ui.control.EditField
         NewunitsEditFieldLabel         matlab.ui.control.Label
@@ -135,6 +137,7 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
         actual_xlim
         lastplotted
         T
+        NN
         units
         fsz
         fnm
@@ -307,14 +310,18 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
                 if strcmp(app.YlogtransformSwitch.Value,'Yes')
                     app.pixInt.test{i}=(log10(pos_temp(ic==i)+2)-mean(app.pixInt.negCtrl))';
                 else
-                    app.pixInt.test{i}=(pos_temp(ic==i)-mean(app.pixInt.negCtrl))';
+                    app.pixInt.test{i}=(pos_temp(ic==i)/mean(app.pixInt.negCtrl))';
                 end
                 pixIntVar.test(i)=var(app.pixInt.test{i});
                 samp_size(i)=length(app.pixInt.test{i});
             end
             %-- Prepare Data For Analysis --%
             %Log transformation of signal values
-            app.pixInt.negCtrl=app.pixInt.negCtrl-mean(app.pixInt.negCtrl);
+            if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                app.pixInt.negCtrl=app.pixInt.negCtrl-mean(app.pixInt.negCtrl);
+            else
+                app.pixInt.negCtrl=app.pixInt.negCtrl/mean(app.pixInt.negCtrl);
+            end
             %Transform C to log(C+2) to enable analysis, combine test and negative control data
             app.allTestData_testConc_logplus2 = sort(log10(flip(posConc)+2));
             app.allTestData_testConc=10.^app.allTestData_testConc_logplus2-2;
@@ -682,14 +689,26 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
             %Plot highlighted files all on the same axes
             items_list=app.FilestoplotListBox.Value;
             if app.ColoursListBox.Value=="TAB10"
-                cols=zeros(10,3);
-                cols_temp=["#4E79A1","#F28E2B","#E15759","#76B7B2","#59A14F","#EDC948","#B07AA1","#FF9DA7","#9C755F","#BAB0AC"];
-                for i_cols=1:length(cols_temp)
-                    str=char(cols_temp(i_cols));
-                    cols(i_cols,:) = sscanf(str(2:end),'%2x%2x%2x',[1 3])/255;
+                % cols=zeros(10,3);
+                cols=["#4E79A1","#F28E2B","#E15759","#76B7B2","#59A14F","#EDC948","#B07AA1","#FF9DA7","#9C755F","#BAB0AC"];
+                cols=validatecolor(cols, 'multiple');
+                % for i_cols=1:length(cols_temp)
+                %     str=char(cols_temp(i_cols));
+                %     cols(i_cols,:) = sscanf(str(2:end),'%2x%2x%2x',[1 3])/255;
+                % end
+                if app.plotCounter+length(items_list)>size(cols,1)
+                    cols=repmat(cols,ceil((app.plotCounter+length(items_list))/size(cols,1)),1);
                 end
-                if app.plotCounter+length(items_list)>length(cols)
-                    cols=repmat(cols,ceil((app.plotCounter+length(items_list))/length(cols)),1);
+            elseif app.ColoursListBox.Value=="Custom"
+                if isfile('colString.mat')
+                    C=load(fullfile(userpath,'colString.mat'));
+                    cols=C.colString;
+                    if app.plotCounter+length(items_list)>size(cols,1)
+                        cols=repmat(cols,ceil((app.plotCounter+length(items_list))/size(cols,1)),1);
+                    end
+                else
+                    errordlg('Custom colours not specified. Please click the button below to specify colours');
+                    error('Custom colours not specified. Please click the button below to specify colours');
                 end
             else
                 cols=brewermap(app.plotCounter+length(items_list),app.ColoursListBox.Value);
@@ -699,8 +718,8 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
             ylims1=nan;
             ylims2=nan;
             if app.plotCounter==0
-                N=load(items_list{1});
-                app.units=string(N.concUnits);
+                app.NN=load(items_list{1});
+                app.units=string(app.NN.concUnits);
                 app.zeroMark2=nan;
             end
             for i=1:length(items_list)
@@ -709,7 +728,7 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
                     errordlg('Units not the same')
                     error('Units not the same')
                 end
-                if ~strcmp(M.logY,N.logY)
+                if ~strcmp(M.logY,app.NN.logY)
                     errordlg('Y transformation not the same')
                     error('Y transformation not the same')
                 end
@@ -752,10 +771,7 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
                     ylims2=max(M.allData_pixInt)+0.1;
                 end
             end
-            if app.plotCounter==0
-                N=load(items_list{1});
-                app.units=string(N.concUnits);
-            end
+            
             for i=1:length(items_list)
                 M=load(items_list{i});
                 [filepath,~,~] = fileparts(items_list{i});
@@ -810,7 +826,7 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
                 else
                     xlabel(app.UIAxes2,['Analyte Concentration (',app.NewunitsEditField.Value,')']);
                 end
-                if strcmp(N.logY,'Yes')
+                if strcmp(app.NN.logY,'Yes')
                     ylabel(app.UIAxes2,'Log Normalized Y Value');
                 else
                     ylabel(app.UIAxes2,'Normalized Y Value');
@@ -1047,7 +1063,6 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
         function ChangeFontButtonPushed(app, event)
             opts=uisetfont;
             if isstruct(opts)==0
-                errordlg('Font not changed')
                 figure(app.LODcalculationsUIFigure)
             else
                 set(app.fsz,{'FontSize'}, num2cell(opts.FontSize));
@@ -1220,6 +1235,33 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
             app.TextArea_2.Position = [20 20 parentPosition(3)*.25 parentPosition(4)*.6];
             uit = uitable(app.ANOVATab,'Data',app.T);
             uit.Position=uitablePosition;
+        end
+
+        % Button pushed function: DefinecustomcoloursButton
+        function DefinecustomcoloursButtonPushed(app, event)
+            prompt = {'Enter hex colours separated by spaces:'};
+            dlgtitle = 'Custom colours';
+            answer = inputdlg(prompt,dlgtitle);
+            colString = split(answer);
+            try
+                colString=validatecolor(colString,'multiple');
+                save(fullfile(userpath,'colString.mat'),'colString')
+            catch
+                errordlg('Not valid colour hex codes');
+                error('Not valid colour hex codes');
+            end
+        end
+
+        % Button pushed function: ModifyaxestitlesButton
+        function ModifyaxestitlesButtonPushed(app, event)
+            prompt = {'X axis title:','Y axis title:'};
+            answer = inputdlg(prompt);
+            if ~isempty(answer{1})
+                xlabel(app.UIAxes2,string(answer{1}))
+            end
+            if ~isempty(answer{2})
+                ylabel(app.UIAxes2,string(answer{2}))
+            end
         end
     end
 
@@ -1557,34 +1599,34 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
             % Create ColoursListBoxLabel
             app.ColoursListBoxLabel = uilabel(app.MultipleplotsTab);
             app.ColoursListBoxLabel.HorizontalAlignment = 'right';
-            app.ColoursListBoxLabel.Position = [500 236 47 22];
+            app.ColoursListBoxLabel.Position = [500 282 47 22];
             app.ColoursListBoxLabel.Text = 'Colours';
 
             % Create ColoursListBox
             app.ColoursListBox = uilistbox(app.MultipleplotsTab);
-            app.ColoursListBox.Items = {'Dark2', 'Accent', 'Paired', 'Pastel1', 'Pastel2', 'Set1', 'Set2', 'Set3', 'TAB10'};
-            app.ColoursListBox.Position = [554 219 75 58];
+            app.ColoursListBox.Items = {'Custom', 'Dark2', 'Accent', 'Paired', 'Pastel1', 'Pastel2', 'Set1', 'Set2', 'Set3', 'TAB10'};
+            app.ColoursListBox.Position = [554 253 75 60];
             app.ColoursListBox.Value = 'Dark2';
 
             % Create OrderofmagnitudeadjustmentEditFieldLabel
             app.OrderofmagnitudeadjustmentEditFieldLabel = uilabel(app.MultipleplotsTab);
             app.OrderofmagnitudeadjustmentEditFieldLabel.HorizontalAlignment = 'right';
-            app.OrderofmagnitudeadjustmentEditFieldLabel.Position = [114 344 171 22];
+            app.OrderofmagnitudeadjustmentEditFieldLabel.Position = [10 343 171 22];
             app.OrderofmagnitudeadjustmentEditFieldLabel.Text = 'Order of magnitude adjustment';
 
             % Create OrderofmagnitudeadjustmentEditField
             app.OrderofmagnitudeadjustmentEditField = uieditfield(app.MultipleplotsTab, 'numeric');
-            app.OrderofmagnitudeadjustmentEditField.Position = [300 344 100 22];
+            app.OrderofmagnitudeadjustmentEditField.Position = [196 343 100 22];
 
             % Create NewunitsEditFieldLabel
             app.NewunitsEditFieldLabel = uilabel(app.MultipleplotsTab);
             app.NewunitsEditFieldLabel.HorizontalAlignment = 'right';
-            app.NewunitsEditFieldLabel.Position = [458 288 58 22];
+            app.NewunitsEditFieldLabel.Position = [17 318 58 22];
             app.NewunitsEditFieldLabel.Text = 'New units';
 
             % Create NewunitsEditField
             app.NewunitsEditField = uieditfield(app.MultipleplotsTab, 'text');
-            app.NewunitsEditField.Position = [531 288 100 22];
+            app.NewunitsEditField.Position = [196 318 100 22];
 
             % Create ChangeFontButton_2
             app.ChangeFontButton_2 = uibutton(app.MultipleplotsTab, 'push');
@@ -1592,10 +1634,22 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
             app.ChangeFontButton_2.Position = [523 75 100 22];
             app.ChangeFontButton_2.Text = 'Change Font';
 
+            % Create DefinecustomcoloursButton
+            app.DefinecustomcoloursButton = uibutton(app.MultipleplotsTab, 'push');
+            app.DefinecustomcoloursButton.ButtonPushedFcn = createCallbackFcn(app, @DefinecustomcoloursButtonPushed, true);
+            app.DefinecustomcoloursButton.Position = [386 345 134 23];
+            app.DefinecustomcoloursButton.Text = 'Define custom colours';
+
+            % Create ModifyaxestitlesButton
+            app.ModifyaxestitlesButton = uibutton(app.MultipleplotsTab, 'push');
+            app.ModifyaxestitlesButton.ButtonPushedFcn = createCallbackFcn(app, @ModifyaxestitlesButtonPushed, true);
+            app.ModifyaxestitlesButton.Position = [519 220 107 23];
+            app.ModifyaxestitlesButton.Text = 'Modify axes titles';
+
             % Create AddExtraPointsButton
             app.AddExtraPointsButton = uibutton(app.MultipleplotsTab, 'push');
             app.AddExtraPointsButton.ButtonPushedFcn = createCallbackFcn(app, @AddExtraPointsButtonPushed, true);
-            app.AddExtraPointsButton.Position = [411 344 105 22];
+            app.AddExtraPointsButton.Position = [529 318 105 22];
             app.AddExtraPointsButton.Text = 'Add Extra Points';
 
             % Create TtestTab
