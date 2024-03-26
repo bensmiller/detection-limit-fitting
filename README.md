@@ -62,11 +62,13 @@ Langmuir: $y=\frac{a\cdot10^x}{c+10^x}+d$
 The table below contains the default initial guesses for parameters $a$, $b$, $c$, $d$, and $g$ from the equations above:
 
 | **Model** | **$a$**              | **$b$**                            | **$c$**                            | **$d$**           | **$g$**   |
-|-----------|:--------------:|:----------------------------:|:----------------------------:|:-----------:|:---:|         
-| Linear    | 1              | 0                            | n/a                          | n/a         | n/a |
-| Langmuir  | max Y value    | median analyte concentration | 0                            | n/a         | n/a |
-| 4PL       | 0              | 5                            | median analyte concentration | max Y value | n/a |
-| 5PL       | 0              | 5                            | median analyte concentration | max Y value | 5   |
+|-----------------------|:--------------:|:----------------------------:|:----------------------------:|:-----------:|:---:|         
+| Linear                | 1              | 0                            | n/a                          | n/a         | n/a |
+| Langmuir              | max Y value    | n/a                          | median analyte concentration | 0           | n/a |
+| 4PL                   | 0              | 5                            | median analyte concentration | max Y value | n/a |
+| 5PL                   | 0              | 5                            | median analyte concentration | max Y value | 5   |
+| Exponential           | min Y value    | max Y value                  | median analyte concentration | n/a         | n/a |
+| Stretched Exponential | min Y value    | max Y value                  | median analyte concentration | 1           | n/a |
 
 <img src="screenshots/LOD_calcs_labelled.png" width="547">
 
