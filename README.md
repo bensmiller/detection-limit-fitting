@@ -7,11 +7,16 @@ Software for fitting robust detection limits (LODs) and confidence intervals to 
 If you have feature requests or questions, or would like to get help with problem or report a bug, please use the discussions tab.
 
 ## Latest Revisions
-1.  **NEW FEATURE: ANOVA testing**
-2.  **NEW FEATURE: toggle Y log transform**
-3.  **NEW FEATURE: can now modify initial guesses for fitted parameters**
-4.  Changed t test to just be between two files, now that ANOVA is implemented.
-5.  Added plotting features in "Multiple plots":
+1.  **NEW FEATURE: New fitting models - exponential and stretched exponential**
+2.  **NEW FEATURE: Can now fix zero in fits**
+3.  **NEW FEATURE: Specify own colours manually**
+4.  Bug fixes with fitting including 4PL and 5PL
+5.  Visual adjustments in multifit
+6.  **NEW FEATURE: ANOVA testing**
+7.  **NEW FEATURE: toggle Y log transform**
+8.  **NEW FEATURE: can now modify initial guesses for fitted parameters**
+9.  Changed t test to just be between two files, now that ANOVA is implemented.
+10.  Added plotting features in "Multiple plots":
 
 
 ## Installation
