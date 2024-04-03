@@ -9,7 +9,7 @@ If you have feature requests or questions, or would like to get help with proble
 ## Latest Revisions
 1.  **NEW FEATURE: New fitting models - exponential and stretched exponential**
 2.  **NEW FEATURE: Can now fix zero in fits**
-3.  **NEW FEATURE: Specify own colours manually**
+3.  **NEW FEATURE: Specify custom colours**
 4.  Bug fixes with fitting including 4PL and 5PL
 5.  Visual adjustments in multifit
 6.  **NEW FEATURE: ANOVA testing**
