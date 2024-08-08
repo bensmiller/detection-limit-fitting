@@ -5,6 +5,8 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
         LODcalculationsUIFigure        matlab.ui.Figure
         TabGroup                       matlab.ui.container.TabGroup
         LODcalculationTab              matlab.ui.container.Tab
+        FixzeroSwitch                  matlab.ui.control.Switch
+        FixzeroSwitchLabel             matlab.ui.control.Label
         YlogtransformSwitch            matlab.ui.control.Switch
         YlogtransformSwitchLabel       matlab.ui.control.Label
         EditField_5                    matlab.ui.control.NumericEditField
@@ -28,7 +30,6 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
         SavematButton                  matlab.ui.control.Button
         SaveDataButton                 matlab.ui.control.Button
         SaveFigureButton               matlab.ui.control.Button
-        ModelListBoxLabel              matlab.ui.control.Label
         ModelListBox                   matlab.ui.control.ListBox
         TextArea                       matlab.ui.control.TextArea
         FilebrowseButton               matlab.ui.control.Button
@@ -152,103 +153,121 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
     methods (Access = private)
         
         %-- SUBFUNCTIONS --%
-        %to find covariance matrix in order to
-        %calculate SD and CI of LOD, based on variance in the fit.
-        %Linear, Langmuir, and 5PL models written by Benjamin S Miller
-        %4PL written by Maryclare Griffin
-        
-        %Linear model:
-        function y = gradfuninv_Lin(app,pars, x)
-         a = pars(1);
-         b = pars(2);
-         da = -log10(exp(1))./(a*(10.^x-b));
-         db = -log10(exp(1))*a/(10.^x-b);
-         y = [da; db];
+        %Inverse functions
+       
+        function y = invLin(app,yy,fitpars)
+            y=log10((yy-fitpars(2))/fitpars(1)+2);
+        end
+        function y = invLinLog(app,yy,fitpars)
+            y=log10((10.^yy-fitpars(2))/fitpars(1)+2);
+        end
+        function y = invLin_f0(app,yy,fitpars)
+            y=log10((yy-1)/fitpars(1)+2);
+        end
+        function y = invLinLog_f0(app,yy,fitpars)
+            y=log10((10.^yy-1)/fitpars(1)+2);
+        end
+        function y = invLang(app,yy,fitpars)
+            y=log10(fitpars(2)*(yy-fitpars(3))./(fitpars(1)+fitpars(3)-(yy))+2);
         end
 
-        function y = gradfuninv_Lin_nolog(app,pars, x)
-         a = pars(1);
-         b = pars(2);
-         da = -log10(exp(1))./(a*(x-b));
-         db = -log10(exp(1))*a/(x-b);
-         y = [da; db];
-        end
-        
-        function y = dfitfuninv_Lin(app,x, pars)
-         b = pars(2);
-         y = 10.^x./(10.^x-b);
+        function y = invLangLog(app,yy,fitpars)
+            y=log10(fitpars(2)*(10.^yy-fitpars(3))./(fitpars(1)+fitpars(3)-(10.^yy))+2);
         end
 
-        function y = dfitfuninv_Lin_nolog(app,x, pars)
-         b = pars(2);
-         y = 1/(log(10)*(x-b));
+        function y = invLang_f0(app,yy,fitpars)
+            y=log10(fitpars(2)*(yy-1)./(fitpars(1)+1-(yy))+2);
+        end
+
+        function y = invLangLog_f0(app,yy,fitpars)
+            y=log10(fitpars(2)*(10.^yy-1)./(fitpars(1)+1-(10.^yy))+2);
+        end
+
+        function y = invExp(app,yy,fitpars)
+            y=log10(-fitpars(3)*log(1-(yy-fitpars(1))./fitpars(2))+2);
+        end
+
+        function y = invExpLog(app,yy,fitpars)
+            y=log10(-fitpars(3)*log(1-(10.^yy-fitpars(1))./fitpars(2))+2);
+        end
+
+        function y = invExp_f0(app,yy,fitpars)
+            y=log10(-fitpars(2)*log(1-(yy-1)./fitpars(1))+2);
+        end
+
+        function y = invExpLog_f0(app,yy,fitpars)
+            y=log10(-fitpars(2)*log(1-(10.^yy-1)./fitpars(1))+2);
+        end
+
+        function y = invExpStr(app,yy,fitpars)
+            y=log10(fitpars(3)*(-log(1-(yy-fitpars(1))./fitpars(2))).^(1/fitpars(4))+2);
+        end
+
+        function y = invExpStrLog(app,yy,fitpars)
+            y=log10(fitpars(3)*(-log(1-(10.^yy-fitpars(1))./fitpars(2))).^(1/fitpars(4))+2);
         end
         
-        %Langmuir model:
-        function y = gradfuninv_Lang(app,pars, x)
-         a = pars(1);
-         b = pars(2);
-         d = pars(3);
-         da = -log10(exp(1))./(a+d-x);
-         db = log10(exp(1))/b;
-         dd = -a*b*log10(exp(1))./(b*(x-d).*(a+d-x));
-         y = [da; db; dd];
+        
+        function y = invExpStr_f0(app,yy,fitpars)
+            y=log10(fitpars(2)*(-log(1-(yy-1)./fitpars(1))).^(1/fitpars(3))+2);
+        end
+
+        function y = invExpStrLog_f0(app,yy,fitpars)
+            y=log10(fitpars(2)*(-log(1-(10.^yy-1)./fitpars(1))).^(1/fitpars(3))+2);
+        end
+
+        function y = inv4PL(app,yy,fitpars)
+            y=fitpars(3)*(( (fitpars(1)-fitpars(4))./(yy-fitpars(4)) -1).^(1/fitpars(2)));
+        end
+
+        function y = inv4PL_f0(app,yy,fitpars)
+            y=fitpars(2)*(( (1-fitpars(3))./(yy-fitpars(3)) -1).^(1/fitpars(1)));
+        end
+
+        function y = inv4PLLog(app,yy,fitpars)
+            y=fitpars(3)*(( (fitpars(1)-fitpars(4))./(10.^yy-fitpars(4)) -1).^(1/fitpars(2)));
+        end
+
+        function y = inv4PLLog_f0(app,yy,fitpars)
+            y=fitpars(2)*(( (1-fitpars(3))./(10.^yy-fitpars(3)) -1).^(1/fitpars(1)));
+        end
+
+        function y = inv5PL(app,yy,fitpars)
+            y=fitpars(3)*(( ((fitpars(1)-fitpars(4))./(yy-fitpars(4))).^(1/fitpars(5)) -1).^(1/fitpars(2)));
+        end
+
+        function y = inv5PL_f0(app,yy,fitpars)
+            y=fitpars(2)*(( ((1-fitpars(3))./(yy-fitpars(3))).^(1/fitpars(4)) -1).^(1/fitpars(1)));
+        end
+
+        function y = inv5PLLog(app,yy,fitpars)
+            y=fitpars(3)*(( ((fitpars(1)-fitpars(4))./(10.^yy-fitpars(4))).^(1/fitpars(5)) -1).^(1/fitpars(2)));
+        end
+
+        function y = inv5PLLog_f0(app,yy,fitpars)
+            y=fitpars(2)*(( ((1-fitpars(3))./(10.^yy-fitpars(3))).^(1/fitpars(4)) -1).^(1/fitpars(1)));
         end
         
-        function y = dfitfuninv_Lang(app,x, pars)
-         a = pars(1);
-         b = pars(2);
-         d = pars(3);
-         y = a*b*log10(exp(1))./(b*(x-d).*(a+d-x));
+        function y=gradfuninv(app,func,pars, x)
+            y=zeros(length(pars),1);
+            for ii=1:length(pars)
+                pars_temp=pars;
+                pars_temp(ii)=pars(ii)*0.99999999999;
+                xx(1)=func(app,x,pars_temp);
+                pars_temp(ii)=pars(ii)*1.00000000001;
+                xx(2)=func(app,x,pars_temp);
+                y(ii)=diff(xx)./diff(pars(ii)*[0.99999999999,1.00000000001]);
+            end
         end
-        
-        %4PL model:
-        function y = gradfuninv_4PL(app,pars, x)
-         a = pars(1);
-         b = pars(2);
-         c = pars(3);
-         d = pars(4);
-         da = c*((x - a)./(d - x)).^(1/b)./(b*(a - x));
-         db = -1*c*((x - a)./(d - x)).^(1/b).*log((x - a)./(d - x))/(b^2);
-         dc = ((a - x)./(x - d)).^(1/b);
-         dd = -1*(c*((a - x)./(x - d)).^(1/b))./(b*(d - x));
-         y = [da; db; dc; dd];
+
+        function y = dfitfuninv(app,func,x, pars)
+            yy=[x*0.99999999999,x*1.00000000001];
+            xx=func(app,yy,pars);
+            y=diff(xx)./diff(yy);
         end
-        
-        function y = dfitfuninv_4PL(app,x, pars)
-         a = pars(1);
-         b = pars(2);
-         c = pars(3);
-         d = pars(4);
-         y = (c*(d - a)*((x - a)./(d - x)).^(1/b - 1))./(b*(d - x).^2);
-        end
-        
-        %5PL model:
-        function y = gradfuninv_5PL(app,pars, x)
-         a = pars(1);
-         b = pars(2);
-         c = pars(3);
-         d = pars(4);
-         g = pars(5);
-         dd = (c/b)*(((((a - d)./(x - d)).^(1/g))-1).^((1/b)-1))*(1/g).*(((a-d)/(x-d)).^(1/g)).*((a-x)./((x-d).*(a-d)));
-         da = (c/b)*(((((a - d)./(x - d)).^(1/g))-1).^((1/b)-1))*(1/g).*(((a-d)/(x-d)).^(1/g)).*(1/(a-d));
-         db = -1*c*((((a - d)./(x - d)).^(1/g))-1).^(1/b).*log(((((a - d)./(x - d)).^(1/g))-1))/(b^2);
-         dc = ((((a - d)./(x - d)).^(1/g))-1).^(1/b);
-         dg = (c/b)*(((((a - d)./(x - d)).^(1/g))-1).^((1/b)-1)).*(((a - d)./(x - d)).^(1/g)).*log((a-d)./(x-d)).*(-1/g^2);
-         y = [da; db; dc; dd; dg];
-        end
-        
-        function y = dfitfuninv_5PL(app,x, pars)
-         a = pars(1);
-         b = pars(2);
-         c = pars(3);
-         d = pars(4);
-         g = pars(5);
-         y = (c/b)*(((((a - d)./(x - d)).^(1/g))-1).^((1/b)-1))*(1/g).*(((a-d)/(x-d)).^(1/g)).*(-1./(x-d));
-        end
-        
+       
         %Function to calculate two-tailed t test from summary statistics
-        function pVal=ttest_2tailed(app,mean1,mean2,se1,se2,n1,n2,modelparams1,modelparams2)
+        function [pVal, tstat, df]=ttest_2tailed(app,mean1,mean2,se1,se2,n1,n2,modelparams1,modelparams2)
             tstat=(mean1-mean2)/sqrt(se1^2+se2^2);
             df=((se1^2+se2^2)^2)/((se1^4/(n1-modelparams1))+(se2^4/(n2-modelparams2)));
             pVal=2*(1-tcdf(abs(tstat),df));
@@ -304,13 +323,22 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
             app.pixInt.negCtrl=A(A(:,1)==0,2)';
             if strcmp(app.YlogtransformSwitch.Value,'Yes')
                 app.pixInt.negCtrl=log10(app.pixInt.negCtrl+2);
+            else
+                min_temp=min(app.pixInt.negCtrl);
+                if min_temp<0
+                    app.pixInt.negCtrl=app.pixInt.negCtrl-min_temp;
+                end
             end
             samp_size=zeros(length(testConc),1);
             for i=1:length(testConc)
                 if strcmp(app.YlogtransformSwitch.Value,'Yes')
                     app.pixInt.test{i}=(log10(pos_temp(ic==i)+2)-mean(app.pixInt.negCtrl))';
                 else
-                    app.pixInt.test{i}=(pos_temp(ic==i)/mean(app.pixInt.negCtrl))';
+                    app.pixInt.test{i}=(pos_temp(ic==i))';
+                    if min_temp<0
+                        app.pixInt.test{i}=app.pixInt.test{i}-min_temp;
+                    end
+                    app.pixInt.test{i}=app.pixInt.test{i}/mean(app.pixInt.negCtrl);
                 end
                 pixIntVar.test(i)=var(app.pixInt.test{i});
                 samp_size(i)=length(app.pixInt.test{i});
@@ -338,26 +366,108 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
             [xData, yData] = prepareCurveData(allData_testConc_logplus2, app.allData_pixInt);
             hold(app.UIAxes,'off')
             cla(app.UIAxes,'reset')
-            switch app.ModelListBox.Value
+            model_choose=app.ModelListBox.Value;
+            if strcmp(app.FixzeroSwitch.Value,'Yes')
+                model_choose=[model_choose,'_f0'];
+            end
+            switch model_choose
                 case 'Linear'
                     if strcmp(app.YlogtransformSwitch.Value,'Yes')
-                        ft = @(b,xdata)(log10(b(1)*10.^xdata+b(2))); %Linear fit (10^y=a*10^x+b, where a is the gradient and b is the y intercept)
+                        ft = @(b,xdata)log10(b(1)*(10.^xdata-2)+b(2)); %Linear fit (10^y=a*10^x+b, where a is the gradient and b is the y intercept)
                     else
-                        ft = @(b,xdata)(b(1)*10.^xdata+b(2)); %Linear fit (10^y=a*10^x+b, where a is the gradient and b is the y intercept)
+                        ft = @(b,xdata)(b(1)*(10.^xdata-2)+b(2)); %Linear fit (10^y=a*10^x+b, where a is the gradient and b is the y intercept)
                     end
-                    b0 = [1 0]; %starting points
+                    b0 = [1 1]; %starting points
+                case 'Linear_f0'
+                    if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                        ft = @(b,xdata)log10(b(1)*(10.^xdata-2)+1); %Linear fit (10^y=a*10^x+b, where a is the gradient and b is the y intercept)
+                    else
+                        ft = @(b,xdata)(b(1)*(10.^xdata-2)+1); %Linear fit (10^y=a*10^x+b, where a is the gradient and b is the y intercept)
+                    end
+                    b0 = 1; %starting points
                 case 'Langmuir'
-                    ft = @(b,xdata)((((b(1))*(10.^xdata))./(b(2)+(10.^xdata)))+b(3)); %Langmuir curve (using 10^x instead of x in common equation)
-                    b0 = [max(yData) median(testConc) 0]; %starting points 
+                    if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                        ft = @(b,xdata)log10(((((b(1))*(10.^xdata-2))./(b(2)+(10.^xdata-2)))+b(3))); %Langmuir curve (using 10^x instead of x in common equation)
+                        b0 = [10^max(yData) median(testConc) 1]; %starting points
+                    else
+                        ft = @(b,xdata)((((b(1))*(10.^xdata-2))./(b(2)+(10.^xdata-2)))+b(3)); %Langmuir curve (using 10^x instead of x in common equation)
+                        b0 = [max(yData) median(testConc) 1]; %starting points
+                    end
+                    
+                case 'Langmuir_f0'
+                    if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                        ft = @(b,xdata)log10(((((b(1))*(10.^xdata-2))./(b(2)+(10.^xdata-2))))+1); %Langmuir curve (using 10^x instead of x in common equation)
+                        b0 = [10^max(yData) median(testConc)]; %starting points 
+                    else
+                        ft = @(b,xdata)((((b(1))*(10.^xdata-2))./(b(2)+(10.^xdata-2)))+1); %Langmuir curve (using 10^x instead of x in common equation)
+                        b0 = [max(yData) median(testConc)]; %starting points 
+                    end   
                 case '4PL'
-                    ft = @(b,xdata)(((b(1)-b(4))./(1+((xdata/b(3)).^b(2))))+b(4)); % fitting function 4PL
-                    b0 = [0 5 median(xData) max(yData)]; %starting points 
+                    if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                        ft = @(b,xdata)log10(((b(1)-b(4))./(1+((xdata/b(3)).^b(2))))+b(4)); % fitting function 4PL
+                        b0 = [1 5 median(xData) 10^max(yData)]; %starting points
+                    else
+                        ft = @(b,xdata)(((b(1)-b(4))./(1+((xdata/b(3)).^b(2))))+b(4)); % fitting function 4PL
+                        b0 = [1 5 median(xData) max(yData)]; %starting points
+                    end
+                case '4PL_f0'
+                    if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                        ft = @(b,xdata)log10(((1-b(3))./(1+((xdata/b(2)).^b(1))))+b(3)); % fitting function 4PL
+                        b0 = [5 median(xData) 10^max(yData)]; %starting points
+                    else
+                        ft = @(b,xdata)(((1-b(3))./(1+((xdata/b(2)).^b(1))))+b(3)); % fitting function 4PL
+                        b0 = [5 median(xData) max(yData)]; %starting points
+                    end
                 case '5PL'
-                    ft = @(b,xdata)(((b(1)-b(4))./(1+((xdata/b(3)).^b(2))).^b(5))+b(4)); %5PL curve
-                    b0 = [0 5 median(xData) max(yData) 5]; %starting points 
-                otherwise %defaults back to Langmuir curve
-                    ft = @(b,xdata)((((b(1))*(10.^xdata))./(b(2)+(10.^xdata)))+b(3)); %Langmuir curve
-                    b0 = [max(yData) median(testConc) 0]; %starting points 
+                    if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                        ft = @(b,xdata)log10(((b(1)-b(4))./(1+((xdata/b(3)).^b(2))).^b(5))+b(4)); %5PL curve
+                        b0 = [1 5 median(xData) 10^max(yData) 5]; %starting points
+                    else
+                        ft = @(b,xdata)(((b(1)-b(4))./(1+((xdata/b(3)).^b(2))).^b(5))+b(4)); %5PL curve
+                        b0 = [1 5 median(xData) max(yData) 5]; %starting points
+                    end
+                case '5PL_f0'
+                    if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                        ft = @(b,xdata)log10(((1-b(3))./(1+((xdata/b(2)).^b(1))).^b(4))+b(3)); %5PL curve
+                        b0 = [5 median(xData) 10^max(yData) 5]; %starting points
+                    else
+                        ft = @(b,xdata)(((1-b(3))./(1+((xdata/b(2)).^b(1))).^b(4))+b(3)); %5PL curve
+                        b0 = [5 median(xData) max(yData) 5]; %starting points
+                    end
+                case 'Exponential'
+                    if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                        ft = @(b,xdata)log10(b(1)+b(2)*(1-exp(-(10.^xdata-2)/b(3))));
+                        b0 = [1 10^max(yData) median(testConc)]; %starting points 
+                    else
+                        ft = @(b,xdata)(b(1)+b(2)*(1-exp(-(10.^xdata-2)/b(3))));
+                        b0 = [1 max(yData) median(testConc)]; %starting points
+                    end
+                case 'Exponential_f0'
+                    if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                        ft = @(b,xdata)log10(b(1)*(1-exp(-(10.^xdata-2)/b(2)))+1);
+                        b0 = [10^max(yData) median(testConc)]; %starting points 
+                    else
+                        ft = @(b,xdata)(b(1)*(1-exp(-(10.^xdata-2)/b(2)))+1);
+                        b0 = [max(yData) median(testConc)]; %starting points
+                    end
+                case 'Stretch Exp'
+                    if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                        ft = @(b,xdata)log10(b(1)+b(2)*(1-exp(-((10.^xdata-2)/b(3)).^b(4))));
+                        b0 = [1 10^max(yData) median(testConc),1]; %starting points 
+                    else
+                        ft = @(b,xdata)(b(1)+b(2)*(1-exp(-((10.^xdata-2)/b(3)).^b(4))));
+                        b0 = [1 max(yData) median(testConc),1]; %starting points
+                    end
+                case 'Stretch Exp_f0'
+                    if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                        ft = @(b,xdata)log10(b(1)*(1-exp(-((10.^xdata-2)/b(2)).^b(3)))+1);
+                        b0 = [10^max(yData) median(testConc),1]; %starting points 
+                    else
+                        ft = @(b,xdata)(1+b(1)*(1-exp(-((10.^xdata-2)/b(2)).^b(3))));
+                        b0 = [max(yData) median(testConc),1]; %starting points
+                    end
+                otherwise 
+                    error('Select a model')
             end
             if app.ParameterinitialguessesEditField.Value~=-Inf
                 b0(1)=app.ParameterinitialguessesEditField.Value;
@@ -398,48 +508,141 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
             app.Ld = app.Lc + t_test*SD_test; %Limit of detection in signal space based on SD
             %-- Calculate LOD in Concentration Space, Based on Calibration Curve --%
             %Calculate LOD from fit using inverse of fitting equations
-            switch app.ModelListBox.Value
+            switch model_choose
                 case 'Linear'
                     if strcmp(app.YlogtransformSwitch.Value,'Yes')
-                        app.logplus2_LOD = log10((10^app.Ld-fitpars(2))/fitpars(1));
-                        gradinv = gradfuninv_Lin(app,fitpars, app.Ld);
-                        dfitinv = dfitfuninv_Lin(app,app.Ld, fitpars);
+                        app.logplus2_LOD = invLinLog(app,app.Ld,fitpars);
+                        gradinv = gradfuninv(app,@invLinLog,fitpars, app.Ld);
+                        dfitinv = dfitfuninv(app,@invLinLog,app.Ld, fitpars);
                     else
-                        app.logplus2_LOD = log10((app.Ld-fitpars(2))/fitpars(1));
-                        gradinv = gradfuninv_Lin_nolog(app,fitpars, app.Ld);
-                        dfitinv = dfitfuninv_Lin_nolog(app,app.Ld, fitpars);
+                        app.logplus2_LOD = invLin(app,app.Ld,fitpars);
+                        gradinv = gradfuninv(app,@invLin,fitpars, app.Ld);
+                        dfitinv = dfitfuninv(app,@invLin,app.Ld, fitpars);
+                    end
+                case 'Linear_f0'
+                    if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                        app.logplus2_LOD = invLinLog_f0(app,app.Ld,fitpars);
+                        gradinv = gradfuninv(app,@invLinLog_f0,fitpars, app.Ld);
+                        dfitinv = dfitfuninv(app,@invLinLog_f0,app.Ld, fitpars);
+                    else
+                        app.logplus2_LOD = invLin_f0(app,app.Ld,fitpars);
+                        gradinv = gradfuninv(app,@invLin_f0,fitpars, app.Ld);
+                        dfitinv = dfitfuninv(app,@invLin_f0,app.Ld, fitpars);
                     end
                 case 'Langmuir'
-                    app.logplus2_LOD = log10(fitpars(2)*(app.Ld-fitpars(3))/(fitpars(1)+fitpars(3)-app.Ld));
-                    gradinv = gradfuninv_Lang(app,fitpars, app.Ld);
-                    dfitinv = dfitfuninv_Lang(app,app.Ld, fitpars);
+                    if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                        app.logplus2_LOD = invLangLog(app,app.Ld,fitpars);
+                        gradinv = gradfuninv(app,@invLangLog,fitpars, app.Ld);
+                        dfitinv = dfitfuninv(app,@invLangLog,app.Ld, fitpars);
+                    else
+                        app.logplus2_LOD = invLang(app,app.Ld,fitpars);
+                        gradinv = gradfuninv(app,@invLang,fitpars, app.Ld);
+                        dfitinv = dfitfuninv(app,@invLang,app.Ld, fitpars);
+                    end
+                case 'Langmuir_f0'
+                    if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                        app.logplus2_LOD = invLangLog_f0(app,app.Ld,fitpars);
+                        gradinv = gradfuninv(app,@invLangLog_f0,fitpars, app.Ld);
+                        dfitinv = dfitfuninv(app,@invLangLog_f0,app.Ld, fitpars);
+                    else
+                        app.logplus2_LOD = invLang_f0(app,app.Ld,fitpars);
+                        gradinv = gradfuninv(app,@invLang_f0,fitpars, app.Ld);
+                        dfitinv = dfitfuninv(app,@invLang_f0,app.Ld, fitpars);
+                    end
                 case '4PL'
-                    app.logplus2_LOD = fitpars(3)*(( (fitpars(1)-fitpars(4))/(app.Ld-fitpars(4)) -1)^(1/fitpars(2)));
-                    gradinv = gradfuninv_4PL(app,fitpars, app.Ld);
-                    dfitinv = dfitfuninv_4PL(app,app.Ld, fitpars);
+                    if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                        app.logplus2_LOD = inv4PLLog(app,app.Ld,fitpars);
+                        gradinv = gradfuninv(app,@inv4PLLog,fitpars, app.Ld);
+                        dfitinv = dfitfuninv(app,@inv4PLLog,app.Ld, fitpars);
+                    else
+                        app.logplus2_LOD = inv4PL(app,app.Ld,fitpars);
+                        gradinv = gradfuninv(app,@inv4PL,fitpars, app.Ld);
+                        dfitinv = dfitfuninv(app,@inv4PL,app.Ld, fitpars);
+                    end
+                case '4PL_f0'
+                    if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                        app.logplus2_LOD = inv4PLLog_f0(app,app.Ld,fitpars);
+                        gradinv = gradfuninv(app,@inv4PLLog_f0,fitpars, app.Ld);
+                        dfitinv = dfitfuninv(app,@inv4PLLog_f0,app.Ld, fitpars);
+                    else
+                        app.logplus2_LOD = inv4PL_f0(app,app.Ld,fitpars);
+                        gradinv = gradfuninv(app,@inv4PL_f0,fitpars, app.Ld);
+                        dfitinv = dfitfuninv(app,@inv4PL_f0,app.Ld, fitpars);
+                    end
                 case '5PL'
-                    app.logplus2_LOD = fitpars(3)*(( ((fitpars(1)-fitpars(4))/(app.Ld-fitpars(4)))^(1/fitpars(5)) -1)^(1/fitpars(2)));
-                    gradinv = gradfuninv_5PL(app,fitpars, app.Ld);
-                    dfitinv = dfitfuninv_5PL(app,app.Ld, fitpars);
-                otherwise
-                    app.logplus2_LOD = log10(fitpars(2)*(app.Ld-fitpars(3))/(fitpars(1)+fitpars(3)-app.Ld));
-                    gradinv = gradfuninv_Lang(app,fitpars, app.Ld);
-                    dfitinv = dfitfuninv_Lang(app,app.Ld, fitpars);
+                    if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                        app.logplus2_LOD = inv5PLLog(app,app.Ld,fitpars);
+                        gradinv = gradfuninv(app,@inv5PLLog,fitpars, app.Ld);
+                        dfitinv = dfitfuninv(app,@inv5PLLog,app.Ld, fitpars);
+                    else
+                        app.logplus2_LOD = inv5PL(app,app.Ld,fitpars);
+                        gradinv = gradfuninv(app,@inv5PL,fitpars, app.Ld);
+                        dfitinv = dfitfuninv(app,@inv5PL,app.Ld, fitpars);
+                    end
+                case '5PL_f0'
+                    if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                        app.logplus2_LOD = inv5PLLog_f0(app,app.Ld,fitpars);
+                        gradinv = gradfuninv(app,@inv5PLLog_f0,fitpars, app.Ld);
+                        dfitinv = dfitfuninv(app,@inv5PLLog_f0,app.Ld, fitpars);
+                    else
+                        app.logplus2_LOD = inv5PL_f0(app,app.Ld,fitpars);
+                        gradinv = gradfuninv(app,@inv5PL_f0,fitpars, app.Ld);
+                        dfitinv = dfitfuninv(app,@inv5PL_f0,app.Ld, fitpars);
+                    end
+                case 'Exponential'
+                    if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                        app.logplus2_LOD = invExpLog(app,app.Ld,fitpars);
+                        gradinv = gradfuninv(app,@invExpLog,fitpars, app.Ld);
+                        dfitinv = dfitfuninv(app,@invExpLog,app.Ld, fitpars);
+                    else
+                        app.logplus2_LOD = invExp(app,app.Ld,fitpars);
+                        gradinv = gradfuninv(app,@invExp,fitpars, app.Ld);
+                        dfitinv = dfitfuninv(app,@invExp,app.Ld, fitpars);
+                    end
+                case 'Exponential_f0'
+                    if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                        app.logplus2_LOD = invExpLog_f0(app,app.Ld,fitpars);
+                        gradinv = gradfuninv(app,@invExpLog_f0,fitpars, app.Ld);
+                        dfitinv = dfitfuninv(app,@invExpLog_f0,app.Ld, fitpars);
+                    else
+                        app.logplus2_LOD = invExp_f0(app,app.Ld,fitpars);
+                        gradinv = gradfuninv(app,@invExp_f0,fitpars, app.Ld);
+                        dfitinv = dfitfuninv(app,@invExp_f0,app.Ld, fitpars);
+                    end
+                case 'Stretch Exp'
+                    if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                        app.logplus2_LOD = invExpStrLog(app,app.Ld,fitpars);
+                        gradinv = gradfuninv(app,@invExpStrLog,fitpars, app.Ld);
+                        dfitinv = dfitfuninv(app,@invExpStrLog,app.Ld, fitpars);
+                    else
+                        app.logplus2_LOD = invExpStr(app,app.Ld,fitpars);
+                        gradinv = gradfuninv(app,@invExpStr,fitpars, app.Ld);
+                        dfitinv = dfitfuninv(app,@invExpStr,app.Ld, fitpars);
+                    end
+                case 'Stretch Exp_f0'
+                    if strcmp(app.YlogtransformSwitch.Value,'Yes')
+                        app.logplus2_LOD = invExpStrLog_f0(app,app.Ld,fitpars);
+                        gradinv = gradfuninv(app,@invExpStrLog_f0,fitpars, app.Ld);
+                        dfitinv = dfitfuninv(app,@invExpStrLog_f0,app.Ld, fitpars);
+                    else
+                        app.logplus2_LOD = invExpStr_f0(app,app.Ld,fitpars);
+                        gradinv = gradfuninv(app,@invExpStr_f0,fitpars, app.Ld);
+                        dfitinv = dfitfuninv(app,@invExpStr_f0,app.Ld, fitpars);
+                    end
+                otherwise 
+                    error('Select a model')
             end
             %Convert back to concentration space and adjust concentration
             %back to original magnitude.
             app.LOD = 10^app.logplus2_LOD - 2;
             if app.LOD<0
                 errordlg('LOD less than zero')
-                error('LOD less than zero')
+                % error('LOD less than zero')
             end
             %-- Calculate SE and 95% CI of LOD based on Covariance Matrix of Fit --%
             [ypred,~] = predict(app.fitresult,xData);
             sizes_mat=repelem([samp_size;length(app.pixInt.negCtrl)],[samp_size;length(app.pixInt.negCtrl)]);
             sigsq2=sum(((ypred-yData).^2)./sizes_mat)/(length(allData_testConc_logplus2) - length(fitpars));
-            for i=1:length(yData)
-                
-            end
             fitcov = app.fitresult.CoefficientCovariance;
             logplus2_LOD_asympvariance = transpose(gradinv)*fitcov*gradinv + dfitinv^2*sigsq2; %asymptotic variance
             app.logplus2_LOD_SE = sqrt(logplus2_LOD_asympvariance); %although sqrt(var) = SD, here we have asymptotic variance, and sqrt(asymp var) = SE
@@ -545,7 +748,7 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
 %             end
 %             loq_lower=10^loq_lower-2;
 %             loq_upper=10^loq_upper-2;
-            txt=sprintf("LC:\t\t%.2d\nLD:\t\t%.2d\nLOD:\t%.2d %s\nLOD CI:\t%.2d - %.2d %s\nRMSE:\t%.2d\nAICc:\t%.2d\nLogspace max gradient:\t%.2d",app.Lc,app.Ld,app.LOD,app.concUnits,app.LOD_lower95,app.LOD_upper95,app.concUnits,app.fitresult.RMSE,app.fitresult.ModelCriterion.AICc,gradient_max);
+            txt=sprintf("LC:\t\t%.2d\nLD:\t\t%.2d\nLOD:\t%.2d %s\nLOD CI:\t%.2d - %.2d %s\nRMSE:\t%.2d\nAICc:\t%.2d\nParams:\t%s\nLogspace max gradient:\t%.2d",app.Lc,app.Ld,app.LOD,app.concUnits,app.LOD_lower95,app.LOD_upper95,app.concUnits,app.fitresult.RMSE,app.fitresult.ModelCriterion.AICc,join(string(round(fitpars,2)),', '),gradient_max);
             app.TextArea.Value=txt;
             app.SaveFigureButton.Enable = 'on';
             app.SaveDataButton.Enable = 'on';
@@ -804,17 +1007,19 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
                     app.yminEditField.Value = y_limits(1);
                     app.ymaxEditField_3.Value = y_limits(2);
                 end
+                x1=sqrt(10);
+                x2=x1*(10^wid);
                 hNegCtrl = errorbar(app.UIAxes2,app.zeroMark2,mean(M.pixInt.negCtrl),std(M.pixInt.negCtrl),'o','markersize',4,'Color',cols(app.plotCounter,:),'linewidth',1,'capsize',0);
                 plot(app.UIAxes2,repmat(app.zeroMark2,[1,M.numReps_negCtrl]),M.pixInt.negCtrl,'x','MarkerSize',4,'color',cols(app.plotCounter,:),'linewidth',.5);
-                fitData_x = logspace(log10(10^(0.99*minpoint)-2),log10(10^max(M.allTestData_testConc_logplus2)-2),50);
+                fitData_x = logspace(log10(app.zeroMark2*(x2*1.2)),log10(10^max(M.allTestData_testConc_logplus2)-2),50);
                 fitData_x_calc=log10(fitData_x+2);
                 [ypred,yci] = predict(M.fitresult,fitData_x_calc'); %Prediction interval of fit, 95% confidence, functional interval, nonsimultaneous
                 h4PLFit = plot(app.UIAxes2,fitData_x,ypred,'color',cols(app.plotCounter,:),'linewidth',.7);
                 h4PL95CI = fill(app.UIAxes2,[fitData_x,flip(fitData_x)],[yci(:,1);flip(yci(:,2))],cols(app.plotCounter,:),'FaceAlpha', 0.2, 'EdgeColor', 'None'); %95% prediction interval
-                hLc = plot(app.UIAxes2,[fitData_x(1)*.8,maxpoint],[M.Lc M.Lc],'--','color',cols(app.plotCounter,:),'linewidth',.7); %Lc line (horizontal)
-                hLd = plot(app.UIAxes2,[fitData_x(1)*.8,maxpoint],[M.Ld M.Ld],'-.','color',cols(app.plotCounter,:),'linewidth',.7); %Ld line (horizontal)
-                plot(app.UIAxes2,app.zeroMark2*[0.5 2],[M.Lc M.Lc],'--','color',cols(app.plotCounter,:),'linewidth',.7); %Ld line (horizontal)
-                plot(app.UIAxes2,app.zeroMark2*[0.5 2],[M.Ld M.Ld],'-.','color',cols(app.plotCounter,:),'linewidth',.7); %Ld line (horizontal)
+                hLc = plot(app.UIAxes2,[fitData_x(1),maxpoint],[M.Lc M.Lc],'--','color',cols(app.plotCounter,:),'linewidth',.7); %Lc line (horizontal)
+                hLd = plot(app.UIAxes2,[fitData_x(1),maxpoint],[M.Ld M.Ld],'-.','color',cols(app.plotCounter,:),'linewidth',.7); %Ld line (horizontal)
+                plot(app.UIAxes2,app.zeroMark2*[0.5 x1],[M.Lc M.Lc],'--','color',cols(app.plotCounter,:),'linewidth',.7); %Ld line (horizontal)
+                plot(app.UIAxes2,app.zeroMark2*[0.5 x1],[M.Ld M.Ld],'-.','color',cols(app.plotCounter,:),'linewidth',.7); %Ld line (horizontal)
                 hLOD = plot(app.UIAxes2,[M.LOD,M.LOD],[ylims1,M.Ld],'-','color',cols(app.plotCounter,:),'linewidth',.7);
                 hLODlower95 = plot(app.UIAxes2,[M.LOD_lower95,M.LOD_lower95],[ylims1,interp1(fitData_x,ypred,M.LOD_lower95)],':','color',cols(app.plotCounter,:),'linewidth',1); %LOD, lower 95% confidence interval line (vertical)
                 plot(app.UIAxes2,[M.LOD_upper95,M.LOD_upper95],[ylims1,interp1(fitData_x,ypred,M.LOD_upper95)],':','color',cols(app.plotCounter,:),'linewidth',1); %LOD, upper 95% confidence interval line (vertical)
@@ -840,11 +1045,9 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
                 for ii=2:length(tk)
                     xtickvals{ii}=sprintf('10^{%i}',log10(tk(ii))+app.OrderofmagnitudeadjustmentEditField.Value);
                 end
-                set(app.UIAxes2,'XTickLabel',xtickvals);
+                set(app.UIAxes2,'XTickLabel',xtickvals,'TickLabelInterpreter', 'tex');
                 app.UIAxes2.Clipping = 'off';
                 wid=0.1*log10(maxpoint/(app.zeroMark2/2))/7;
-                x1=1.5;
-                x2=x1*(10^wid);
                 skew=0.15*wid/0.2;
                 dy=0.1*diff([ylims1,ylims2])/2.7;
                 set(app.UIAxes2,'XMinorTick','on','YMinorTick','on')
@@ -1037,9 +1240,9 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
             N.logplus2_LOD_upper95 = norminv(1-(gamma/2),N.logplus2_LOD,N.logplus2_LOD_SE);
             N.lod_lowers = (10^N.logplus2_LOD_lower95 - 2);
             N.lod_uppers = (10^N.logplus2_LOD_upper95 - 2);
-            pVal=ttest_2tailed(app,M.logplus2_LOD,N.logplus2_LOD,M.logplus2_LOD_SE,N.logplus2_LOD_SE,M.numReps_Total,N.numReps_Total,length(M.fitresult.Coefficients.Estimate),length(N.fitresult.Coefficients.Estimate));
+            [pVal,tVal,dfVal]=ttest_2tailed(app,M.logplus2_LOD,N.logplus2_LOD,M.logplus2_LOD_SE,N.logplus2_LOD_SE,M.numReps_Total,N.numReps_Total,length(M.fitresult.Coefficients.Estimate),length(N.fitresult.Coefficients.Estimate));
             ratio=M.LOD/N.LOD;
-            txt=sprintf('Dataset 1: %s\nDataset 2: %s\nLOD 1: %.2e %s\nLOD 2: %.2e %s\nRatio: %.2e\nCI 1: %.2e-%.2e %s\nCI 2: %.2e-%.2e %s\nP-Value: %.2e',name1,name2,M.LOD,M.concUnits,N.LOD,N.concUnits,ratio,M.lod_lowers,M.lod_uppers,M.concUnits,N.lod_lowers,N.lod_uppers,N.concUnits,pVal);
+            txt=sprintf('Dataset 1: %s\nDataset 2: %s\nLOD 1: %.2e %s\nLOD 2: %.2e %s\nRatio: %.2e\nCI 1: %.2e-%.2e %s\nCI 2: %.2e-%.2e %s\nT: %.2e\ndf: %.2e\nP-Value: %.2e',name1,name2,M.LOD,M.concUnits,N.LOD,N.concUnits,ratio,M.lod_lowers,M.lod_uppers,M.concUnits,N.lod_lowers,N.lod_uppers,N.concUnits,tVal,dfVal,pVal);
             app.TextArea_3.Value=txt;
         end
 
@@ -1291,6 +1494,7 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
             xlabel(app.UIAxes, 'Concentration (M)')
             ylabel(app.UIAxes, 'Y')
             zlabel(app.UIAxes, 'Z')
+            app.UIAxes.TickLabelInterpreter = 'latex';
             app.UIAxes.GridAlpha = 0.15;
             app.UIAxes.FontSize = 10;
             app.UIAxes.Position = [228 117 403 300];
@@ -1313,19 +1517,13 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
 
             % Create TextArea
             app.TextArea = uitextarea(app.LODcalculationTab);
-            app.TextArea.Position = [263 9 360 96];
+            app.TextArea.Position = [263 5 360 109];
 
             % Create ModelListBox
             app.ModelListBox = uilistbox(app.LODcalculationTab);
-            app.ModelListBox.Items = {'Linear', 'Langmuir', '4PL', '5PL'};
-            app.ModelListBox.Position = [17 319 100 74];
+            app.ModelListBox.Items = {'Linear', 'Langmuir', '4PL', '5PL', 'Exponential', 'Stretch Exp'};
+            app.ModelListBox.Position = [17 309 100 111];
             app.ModelListBox.Value = 'Linear';
-
-            % Create ModelListBoxLabel
-            app.ModelListBoxLabel = uilabel(app.LODcalculationTab);
-            app.ModelListBoxLabel.HorizontalAlignment = 'right';
-            app.ModelListBoxLabel.Position = [42 396 38 22];
-            app.ModelListBoxLabel.Text = 'Model';
 
             % Create SaveFigureButton
             app.SaveFigureButton = uibutton(app.LODcalculationTab, 'push');
@@ -1357,58 +1555,58 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
 
             % Create ConcentrationUnitsEditField
             app.ConcentrationUnitsEditField = uieditfield(app.LODcalculationTab, 'text');
-            app.ConcentrationUnitsEditField.Position = [138 291 82 22];
+            app.ConcentrationUnitsEditField.Position = [138 286 82 22];
             app.ConcentrationUnitsEditField.Value = 'M';
 
             % Create ConcentrationUnitsEditFieldLabel
             app.ConcentrationUnitsEditFieldLabel = uilabel(app.LODcalculationTab);
             app.ConcentrationUnitsEditFieldLabel.HorizontalAlignment = 'right';
-            app.ConcentrationUnitsEditFieldLabel.Position = [12 291 111 22];
+            app.ConcentrationUnitsEditFieldLabel.Position = [12 286 111 22];
             app.ConcentrationUnitsEditFieldLabel.Text = 'Concentration Units';
 
             % Create LODFalseNegativeRateEditField
             app.LODFalseNegativeRateEditField = uieditfield(app.LODcalculationTab, 'numeric');
-            app.LODFalseNegativeRateEditField.Position = [191 261 29 22];
+            app.LODFalseNegativeRateEditField.Position = [191 258 29 22];
             app.LODFalseNegativeRateEditField.Value = 5;
 
             % Create LODFalseNegativeRateEditFieldLabel
             app.LODFalseNegativeRateEditFieldLabel = uilabel(app.LODcalculationTab);
             app.LODFalseNegativeRateEditFieldLabel.HorizontalAlignment = 'right';
-            app.LODFalseNegativeRateEditFieldLabel.Position = [7 261 169 22];
+            app.LODFalseNegativeRateEditFieldLabel.Position = [7 258 169 22];
             app.LODFalseNegativeRateEditFieldLabel.Text = 'LOD False Negative Rate (%)';
 
             % Create BlankFalsePositiveRateEditField
             app.BlankFalsePositiveRateEditField = uieditfield(app.LODcalculationTab, 'numeric');
-            app.BlankFalsePositiveRateEditField.Position = [191 232 29 22];
+            app.BlankFalsePositiveRateEditField.Position = [191 229 29 22];
             app.BlankFalsePositiveRateEditField.Value = 5;
 
             % Create BlankFalsePositiveRateEditFieldLabel
             app.BlankFalsePositiveRateEditFieldLabel = uilabel(app.LODcalculationTab);
             app.BlankFalsePositiveRateEditFieldLabel.HorizontalAlignment = 'right';
-            app.BlankFalsePositiveRateEditFieldLabel.Position = [7 232 169 22];
+            app.BlankFalsePositiveRateEditFieldLabel.Position = [7 229 169 22];
             app.BlankFalsePositiveRateEditFieldLabel.Text = 'Blank False Positive Rate (%)';
 
             % Create VarianceOutlierConfidenceLevelEditField_2
             app.VarianceOutlierConfidenceLevelEditField_2 = uieditfield(app.LODcalculationTab, 'numeric');
-            app.VarianceOutlierConfidenceLevelEditField_2.Position = [191 202 29 22];
+            app.VarianceOutlierConfidenceLevelEditField_2.Position = [191 199 29 22];
             app.VarianceOutlierConfidenceLevelEditField_2.Value = 5;
 
             % Create VarianceOutlierConfidenceLevelLabel
             app.VarianceOutlierConfidenceLevelLabel = uilabel(app.LODcalculationTab);
             app.VarianceOutlierConfidenceLevelLabel.HorizontalAlignment = 'right';
-            app.VarianceOutlierConfidenceLevelLabel.Position = [7 196 169 28];
+            app.VarianceOutlierConfidenceLevelLabel.Position = [7 193 169 28];
             app.VarianceOutlierConfidenceLevelLabel.Text = {'Variance Outlier Confidence'; 'Level (%)'};
 
             % Create ConfidenceLevelforLODIntervalEditField
             app.ConfidenceLevelforLODIntervalEditField = uieditfield(app.LODcalculationTab, 'numeric');
-            app.ConfidenceLevelforLODIntervalEditField.Position = [191 172 29 22];
+            app.ConfidenceLevelforLODIntervalEditField.Position = [191 169 29 22];
             app.ConfidenceLevelforLODIntervalEditField.Value = 5;
 
             % Create ConfidenceLevelforLODIntervalEditFieldLabel
             app.ConfidenceLevelforLODIntervalEditFieldLabel = uilabel(app.LODcalculationTab);
             app.ConfidenceLevelforLODIntervalEditFieldLabel.HorizontalAlignment = 'right';
             app.ConfidenceLevelforLODIntervalEditFieldLabel.WordWrap = 'on';
-            app.ConfidenceLevelforLODIntervalEditFieldLabel.Position = [12 166 164 28];
+            app.ConfidenceLevelforLODIntervalEditFieldLabel.Position = [12 163 164 28];
             app.ConfidenceLevelforLODIntervalEditFieldLabel.Text = 'Confidence Level for LOD Interval (%)';
 
             % Create ChangeFontButton
@@ -1458,8 +1656,20 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
             % Create YlogtransformSwitch
             app.YlogtransformSwitch = uiswitch(app.LODcalculationTab, 'slider');
             app.YlogtransformSwitch.Items = {'No', 'Yes'};
-            app.YlogtransformSwitch.Position = [149 363 45 20];
+            app.YlogtransformSwitch.Position = [148 376 45 20];
             app.YlogtransformSwitch.Value = 'Yes';
+
+            % Create FixzeroSwitchLabel
+            app.FixzeroSwitchLabel = uilabel(app.LODcalculationTab);
+            app.FixzeroSwitchLabel.HorizontalAlignment = 'center';
+            app.FixzeroSwitchLabel.Position = [151 345 48 22];
+            app.FixzeroSwitchLabel.Text = 'Fix zero';
+
+            % Create FixzeroSwitch
+            app.FixzeroSwitch = uiswitch(app.LODcalculationTab, 'slider');
+            app.FixzeroSwitch.Items = {'No', 'Yes'};
+            app.FixzeroSwitch.Position = [149 326 45 20];
+            app.FixzeroSwitch.Value = 'No';
 
             % Create MultipleplotsTab
             app.MultipleplotsTab = uitab(app.TabGroup);
@@ -1472,6 +1682,7 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
             ylabel(app.UIAxes2, 'Y')
             zlabel(app.UIAxes2, 'Z')
             app.UIAxes2.FontName = 'Arial';
+            app.UIAxes2.TickLabelInterpreter = 'latex';
             app.UIAxes2.FontSize = 10;
             app.UIAxes2.Position = [12 9 447 306];
 
@@ -1481,6 +1692,7 @@ classdef fitting_app_multitab_beta_4_exported < matlab.apps.AppBase
             ylabel(app.UIAxes2_2, 'Y')
             zlabel(app.UIAxes2_2, 'Z')
             app.UIAxes2_2.FontName = 'Arial';
+            app.UIAxes2_2.TickLabelInterpreter = 'latex';
             app.UIAxes2_2.FontSize = 10;
             app.UIAxes2_2.Visible = 'off';
             app.UIAxes2_2.Position = [13 9 447 306];
