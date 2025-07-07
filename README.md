@@ -1,6 +1,7 @@
 # detection-limit-fitting
 Software for fitting robust detection limits (LODs) and confidence intervals to serial dilution data. Fits can then be plotted individually or multiple on the same axes, and compared using t tests or ANOVA.
 
+[![DOI](https://zenodo.org/badge/468018182.svg)](https://doi.org/10.5281/zenodo.8346293)
 [![View Detection Limit Fitting Tool on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://uk.mathworks.com/matlabcentral/fileexchange/108694-detection-limit-fitting-tool)
 ## Discussions
 
